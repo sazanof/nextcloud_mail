@@ -135,7 +135,6 @@ class MessagesController extends Controller {
 		parent::__construct($appName, $request);
 
 		$this->accountService = $accountService;
-		$this->mailManager = $mailManager;
 		$this->mailSearch = $mailSearch;
 		$this->itineraryService = $itineraryService;
 		$this->currentUserId = $UserId;
@@ -305,6 +304,10 @@ class MessagesController extends Controller {
 			$account = $this->accountService->find($this->currentUserId, $mailbox->getAccountId());
 		} catch (DoesNotExistException $e) {
 			return new JSONResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if (empty($message->getThreadRootId())) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		return new JSONResponse($this->mailManager->getThread($account, $message->getThreadRootId()));
