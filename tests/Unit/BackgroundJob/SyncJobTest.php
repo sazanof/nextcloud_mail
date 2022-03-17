@@ -46,13 +46,13 @@ class SyncJobTest extends TestCase {
 		parent::setUp();
 
 		$this->serviceMock = $this->createServiceMock(SyncJob::class);
+		return;
 		$this->job = $this->serviceMock->getService();
 
 		// Make sure the job is actually run
 		$this->serviceMock->getParameter('time')
 			->method('getTime')
 			->willReturn(500000);
-		return;
 		// Set our common argument
 		$this->job->setArgument([
 			'accountId' => 123,
