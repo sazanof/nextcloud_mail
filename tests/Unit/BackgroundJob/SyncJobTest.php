@@ -70,6 +70,7 @@ class SyncJobTest extends TestCase {
 			->expects(self::once())
 			->method('debug')
 			->with('Could not find account <123> removing from jobs');
+		return;
 		$this->serviceMock->getParameter('jobList')
 			->expects(self::once())
 			->method('remove')
@@ -77,7 +78,6 @@ class SyncJobTest extends TestCase {
 		$this->serviceMock->getParameter('mailboxSync')
 			->expects(self::never())
 			->method('sync');
-		return;
 		$this->serviceMock->getParameter('syncService')
 			->expects(self::never())
 			->method('syncAccount');
