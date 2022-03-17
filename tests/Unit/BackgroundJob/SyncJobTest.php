@@ -45,8 +45,8 @@ class SyncJobTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->serviceMock = $this->createServiceMock(SyncJob::class);
 		return;
+		$this->serviceMock = $this->createServiceMock(SyncJob::class);
 		$this->job = $this->serviceMock->getService();
 
 		// Make sure the job is actually run
