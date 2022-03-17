@@ -72,9 +72,9 @@
 			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
-		"test:integration": "phpunit -c tests/phpunit.integration.xml --testdox",
+		"test:integration": "phpunit -c tests/phpunit.integration.xml --testdox --debug -v",
 		"test:integration:dev": "phpunit -c tests/phpunit.integration.xml --no-coverage --order-by=defects --stop-on-defect --fail-on-warning --stop-on-error --stop-on-failure",
-		"test:unit": "phpunit -c tests/phpunit.unit.xml --testdox",
+		"test:unit": "phpunit -c tests/phpunit.unit.xml --testdox --debug -v",
 		"test:unit:dev": "phpunit -c tests/phpunit.unit.xml --no-coverage --order-by=defects --stop-on-defect --fail-on-warning --stop-on-error --stop-on-failure"
 	},
 	"extra": {
