@@ -66,11 +66,11 @@ class SyncJobTest extends TestCase {
 			->method('findById')
 			->with(123)
 			->willThrowException(new DoesNotExistException(''));
+		return;
 		$this->serviceMock->getParameter('logger')
 			->expects(self::once())
 			->method('debug')
 			->with('Could not find account <123> removing from jobs');
-		return;
 		$this->serviceMock->getParameter('jobList')
 			->expects(self::once())
 			->method('remove')
