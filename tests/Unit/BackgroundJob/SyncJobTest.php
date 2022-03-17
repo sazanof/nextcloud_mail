@@ -77,6 +77,7 @@ class SyncJobTest extends TestCase {
 		$this->serviceMock->getParameter('mailboxSync')
 			->expects(self::never())
 			->method('sync');
+		return;
 		$this->serviceMock->getParameter('syncService')
 			->expects(self::never())
 			->method('syncAccount');
