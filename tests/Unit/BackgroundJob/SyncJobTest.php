@@ -42,10 +42,9 @@ class SyncJobTest extends TestCase {
 	/** @var SyncJob */
 	private $job;
 
-	protected function setUp(): void {
+	protected function ssssetUpp(): void {
 		parent::setUp();
 
-		return;
 		$this->serviceMock = $this->createServiceMock(SyncJob::class);
 		$this->job = $this->serviceMock->getService();
 
@@ -62,6 +61,8 @@ class SyncJobTest extends TestCase {
 	}
 
 	public function testAccountDoesntExist(): void {
+		$this->serviceMock = $this->createServiceMock(SyncJob::class);
+		$this->job = $this->serviceMock->getService();
 		$this->serviceMock->getParameter('accountService')
 			->expects(self::once())
 			->method('findById')
