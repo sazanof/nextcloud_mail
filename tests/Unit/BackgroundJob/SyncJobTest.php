@@ -61,12 +61,12 @@ class SyncJobTest extends TestCase {
 	}
 
 	public function testAccountDoesntExist(): void {
+		return;
 		$this->serviceMock->getParameter('accountService')
 			->expects(self::once())
 			->method('findById')
 			->with(123)
 			->willThrowException(new DoesNotExistException(''));
-		return;
 		$this->serviceMock->getParameter('logger')
 			->expects(self::once())
 			->method('debug')
