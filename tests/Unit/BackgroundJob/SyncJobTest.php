@@ -52,6 +52,7 @@ class SyncJobTest extends TestCase {
 		$this->serviceMock->getParameter('time')
 			->method('getTime')
 			->willReturn(500000);
+		return;
 		// Set our common argument
 		$this->job->setArgument([
 			'accountId' => 123,
@@ -61,7 +62,6 @@ class SyncJobTest extends TestCase {
 	}
 
 	public function testAccountDoesntExist(): void {
-		return;
 		$this->serviceMock->getParameter('accountService')
 			->expects(self::once())
 			->method('findById')
