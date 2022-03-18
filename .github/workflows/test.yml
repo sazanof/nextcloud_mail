@@ -41,6 +41,8 @@ jobs:
     - name: Run tests
       working-directory: nextcloud/apps/mail
       run: composer run test:unit
+      env:
+        XDEBUG_MODE: coverage
     - name: Report coverage
       uses: codecov/codecov-action@v2.1.0
       if: ${{ always() && matrix.nextcloud-versions == 'master' }}

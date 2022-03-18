@@ -27,12 +27,14 @@ namespace OCA\Mail\Tests\Unit\BackgroundJob;
 
 use ChristophWurst\Nextcloud\Testing\ServiceMockObject;
 use ChristophWurst\Nextcloud\Testing\TestCase;
+use InvalidArgumentException;
 use OC\BackgroundJob\JobList;
 use OCA\Mail\Account;
 use OCA\Mail\BackgroundJob\SyncJob;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\ILogger;
 use OCP\IUser;
+use ReflectionClass;
 use Throwable;
 
 class SyncJobTest extends TestCase {
@@ -46,7 +48,21 @@ class SyncJobTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->serviceMock = $this->createServiceMock(SyncJob::class);
+		$reflectedClass = new ReflectionClass(SyncJob::class);
+		$constructor = $reflectedClass->getConstructor();
+		$indexedArgs = [];
+
+		$orderedArgs = [];
+		foreach ($constructor->getParameters() as $parameter) {
+			if (isset($custom[$parameter->getName()])) {
+				$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
+			} else if ($parameter->getType() !== null) {
+				$indexedArgs[$parameter->getName()] = $orderedArgs[] = $this->createMock($parameter->getType()->getName());
+			} else {
+				throw new InvalidArgumentException("Can not defer mock for constructor parameter " . $parameter->getName() . " of class $class");
+			}
+		}
+		$service = new SyncJob(...$orderedArgs);
 		$this->job = $this->serviceMock->getService();
 
 		// Make sure the job is actually run
