@@ -33,6 +33,7 @@ use OCA\Mail\BackgroundJob\SyncJob;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\ILogger;
 use OCP\IUser;
+use Throwable;
 
 class SyncJobTest extends TestCase {
 
@@ -45,8 +46,13 @@ class SyncJobTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->serviceMock = $this->createServiceMock(SyncJob::class);
-		return;
+		try {
+			$this->serviceMock = $this->createServiceMock(SyncJob::class);
+		} catch (Throwable $e) {
+			echo $e->getMessage();
+			echo $e->getFile();
+			echo $e->getLine();
+		}
 		$this->job = $this->serviceMock->getService();
 
 		// Make sure the job is actually run
