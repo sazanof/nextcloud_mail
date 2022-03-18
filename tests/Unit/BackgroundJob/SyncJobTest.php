@@ -59,6 +59,7 @@ class SyncJobTest extends TestCase {
 				//$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
 			} else if ($parameter->getType() !== null) {
 				$originalClassName = $parameter->getType()->getName();
+				echo $originalClassName;
 				$mockObject = $this->createMock($originalClassName);
 				continue;
 				$orderedArgs[] = $mockObject;
