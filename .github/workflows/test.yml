@@ -22,6 +22,7 @@ jobs:
         php-version: ${{ matrix.php-versions }}
         tools: composer:v1
         extensions: ctype,curl,dom,gd,iconv,intl,json,mbstring,openssl,posix,sqlite,xml,zip,gmp
+        coverage: none
     - name: Checkout Nextcloud
       run: git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b ${{ matrix.nextcloud-versions }} nextcloud
     - name: Install Nextcloud
@@ -40,6 +41,8 @@ jobs:
     - name: Run tests
       working-directory: nextcloud/apps/mail
       run: composer run test:unit
+      env:
+        XDEBUG_MODE: coverage
     - name: Report coverage
       uses: codecov/codecov-action@v2.1.0
       if: ${{ always() && matrix.nextcloud-versions == 'master' }}
@@ -102,6 +105,7 @@ jobs:
                 php-version: ${{ matrix.php-versions }}
                 tools: composer:v1
                 extensions: ctype,curl,dom,gd,iconv,intl,json,mbstring,openssl,posix,sqlite,xml,zip,gmp
+                coverage: none
           - name: Checkout Nextcloud
             run: git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b ${{ matrix.nextcloud-versions }} nextcloud
           - name: Install Nextcloud
@@ -131,6 +135,8 @@ jobs:
                 ss -tunlp
                 true | openssl s_client -crlf -connect 127.0.0.1:993
                 composer run test:integration
+            env:
+                XDEBUG_MODE: coverage
           - name: Read slow queries
             if: ${{ always() }}
             run: echo "SELECT * FROM mysql.slow_log WHERE sql_text LIKE '%oc_mail%' AND sql_text NOT LIKE '%information_schema%'" | mysql -h 127.0.0.1 -u root -pmy-secret-pw
