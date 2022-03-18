@@ -49,11 +49,11 @@ class SyncJobTest extends TestCase {
 		parent::setUp();
 
 		$reflectedClass = new ReflectionClass(SyncJob::class);
+		return;
 		$constructor = $reflectedClass->getConstructor();
 		$indexedArgs = [];
 
 		$orderedArgs = [];
-		return;
 		foreach ($constructor->getParameters() as $parameter) {
 			if (isset($custom[$parameter->getName()])) {
 				$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
