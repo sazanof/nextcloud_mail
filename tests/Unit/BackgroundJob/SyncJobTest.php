@@ -49,8 +49,8 @@ class SyncJobTest extends TestCase {
 		parent::setUp();
 
 		$reflectedClass = new ReflectionClass(SyncJob::class);
-		return;
 		$constructor = $reflectedClass->getConstructor();
+		return;
 		$indexedArgs = [];
 
 		$orderedArgs = [];
