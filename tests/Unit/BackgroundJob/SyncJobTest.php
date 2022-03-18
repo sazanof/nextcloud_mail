@@ -99,34 +99,43 @@ class SyncJobTest extends TestCase {
 	}
 
 	public function testAccountDoesntExist(): void {
+		fwrite(STDERR, "TADE 1\n");
 		$this->serviceMock->getParameter('accountService')
 			->expects(self::once())
 			->method('findById')
 			->with(123)
 			->willThrowException(new DoesNotExistException(''));
+		fwrite(STDERR, "TADE 2\n");
 		$this->serviceMock->getParameter('logger')
 			->expects(self::once())
 			->method('debug')
 			->with('Could not find account <123> removing from jobs');
+		fwrite(STDERR, "TADE 3\n");
 		$this->serviceMock->getParameter('jobList')
 			->expects(self::once())
 			->method('remove')
 			->with(SyncJob::class, ['accountId' => 123]);
+		fwrite(STDERR, "TADE 4\n");
 		$this->serviceMock->getParameter('mailboxSync')
 			->expects(self::never())
 			->method('sync');
+		fwrite(STDERR, "TADE 5\n");
 		$this->serviceMock->getParameter('syncService')
 			->expects(self::never())
 			->method('syncAccount');
+		fwrite(STDERR, "TADE 6\n");
 
 		$this->job->setArgument([
 			'accountId' => 123,
 		]);
+		fwrite(STDERR, "TADE 7\n");
 		$this->job->setLastRun(0);
+		fwrite(STDERR, "TADE 8\n");
 		$this->job->execute(
 			$this->createMock(JobList::class),
 			$this->createMock(ILogger::class)
 		);
+		fwrite(STDERR, "TADE 9\n");
 	}
 
 	public function testUserDoesntExist(): void {
