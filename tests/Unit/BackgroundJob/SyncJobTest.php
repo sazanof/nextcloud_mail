@@ -48,13 +48,13 @@ class SyncJobTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
+		$this->createServiceMock();
 		$reflectedClass = new ReflectionClass(SyncJob::class);
 		$constructor = $reflectedClass->getConstructor();
 		$indexedArgs = [];
 
 		$orderedArgs = [];
 		$parameters = $constructor->getParameters();
-		return;
 		foreach ($parameters as $parameter) {
 			if (isset($custom[$parameter->getName()])) {
 				$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
@@ -65,6 +65,7 @@ class SyncJobTest extends TestCase {
 			}
 		}
 		$service = new SyncJob(...$orderedArgs);
+		$this->serviceMock = new ServiceMockObject(SyncJob::class, $indexedArgs, $service);
 		$this->job = $this->serviceMock->getService();
 
 		// Make sure the job is actually run
