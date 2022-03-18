@@ -36,6 +36,7 @@ use OCP\ILogger;
 use OCP\IUser;
 use ReflectionClass;
 use Throwable;
+use function fwrite;
 
 class SyncJobTest extends TestCase {
 
@@ -46,20 +47,25 @@ class SyncJobTest extends TestCase {
 	private $job;
 
 	protected function setUp(): void {
+		fwrite(STDERR, "1\n");
 		parent::setUp();
+		fwrite(STDERR, "2\n");
 
 		$reflectedClass = new ReflectionClass(SyncJob::class);
 		$constructor = $reflectedClass->getConstructor();
 		$indexedArgs = [];
+		fwrite(STDERR, "3\n");
 
 		$orderedArgs = [];
 		$parameters = $constructor->getParameters();
+		fwrite(STDERR, "4\n");
 		foreach ($parameters as $parameter) {
 			if (isset($custom[$parameter->getName()])) {
 				//$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
 			} else if ($parameter->getType() !== null) {
+				fwrite(STDERR, "5\n");
 				$originalClassName = $parameter->getType()->getName();
-				fwrite(STDERR, $originalClassName);
+				fwrite(STDERR, $originalClassName . "\n");
 				$mockObject = $this->createMock($originalClassName);
 				continue;
 				$orderedArgs[] = $mockObject;
