@@ -75,9 +75,13 @@ class SyncJobTest extends TestCase {
 				throw new InvalidArgumentException("Can not defer mock for constructor parameter " . $parameter->getName() . " of class $class");
 			}
 		}
+		fwrite(STDERR, "8\n");
 		$service = new SyncJob(...$orderedArgs);
+		fwrite(STDERR, "9\n");
 		$this->serviceMock = new ServiceMockObject(SyncJob::class, $indexedArgs, $service);
+		fwrite(STDERR, "10\n");
 		$this->job = $this->serviceMock->getService();
+		fwrite(STDERR, "11\n");
 
 		// Make sure the job is actually run
 		$this->serviceMock->getParameter('time')
