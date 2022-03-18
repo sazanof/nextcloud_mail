@@ -50,10 +50,10 @@ class SyncJobTest extends TestCase {
 
 		$reflectedClass = new ReflectionClass(SyncJob::class);
 		$constructor = $reflectedClass->getConstructor();
-		return;
 		$indexedArgs = [];
 
 		$orderedArgs = [];
+		return;
 		foreach ($constructor->getParameters() as $parameter) {
 			if (isset($custom[$parameter->getName()])) {
 				$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
