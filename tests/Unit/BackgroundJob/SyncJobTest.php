@@ -46,9 +46,7 @@ class SyncJobTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		set_error_handler(function($a) { echo "ERROR $a"; }, E_WARNING);
 		$this->serviceMock = $this->createServiceMock(SyncJob::class);
-		restore_error_handler();
 		$this->job = $this->serviceMock->getService();
 
 		// Make sure the job is actually run
