@@ -53,8 +53,9 @@ class SyncJobTest extends TestCase {
 		$indexedArgs = [];
 
 		$orderedArgs = [];
+		$parameters = $constructor->getParameters();
 		return;
-		foreach ($constructor->getParameters() as $parameter) {
+		foreach ($parameters as $parameter) {
 			if (isset($custom[$parameter->getName()])) {
 				$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
 			} else if ($parameter->getType() !== null) {
