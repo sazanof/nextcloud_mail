@@ -56,14 +56,13 @@ class SyncJobTest extends TestCase {
 		$indexedArgs = [];
 		fwrite(STDERR, "3\n");
 
-		failfailfail();
-
 		$orderedArgs = [];
 		$parameters = $constructor->getParameters();
 		fwrite(STDERR, "4\n");
 		foreach ($parameters as $parameter) {
 			if (isset($custom[$parameter->getName()])) {
-				//$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
+				fwrite(STDERR, "CUSTOM\n");
+				$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
 			} else if ($parameter->getType() !== null) {
 				fwrite(STDERR, "5\n");
 				$originalClassName = $parameter->getType()->getName();
