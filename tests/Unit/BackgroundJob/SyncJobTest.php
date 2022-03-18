@@ -67,9 +67,10 @@ class SyncJobTest extends TestCase {
 				$originalClassName = $parameter->getType()->getName();
 				fwrite(STDERR, $originalClassName . "\n");
 				$mockObject = $this->createMock($originalClassName);
-				continue;
+				fwrite(STDERR, "6\n");
 				$orderedArgs[] = $mockObject;
 				$indexedArgs[$parameter->getName()] = $mockObject;
+				fwrite(STDERR, "7\n");
 			} else {
 				throw new InvalidArgumentException("Can not defer mock for constructor parameter " . $parameter->getName() . " of class $class");
 			}

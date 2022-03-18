@@ -57,16 +57,12 @@ class SyncJob extends TimedJob {
 	/** @var LoggerInterface */
 	private $logger;
 
-	/** @var IJobList */
-	private $jobList;
-
 	public function __construct(ITimeFactory $time,
 								IUserManager $userManager,
 								AccountService $accountService,
 								MailboxSync $mailboxSync,
 								ImapToDbSynchronizer $syncService,
-								LoggerInterface $logger,
-								IJobList $jobList) {
+								LoggerInterface $logger) {
 		parent::__construct($time);
 
 		$this->userManager = $userManager;
@@ -74,7 +70,6 @@ class SyncJob extends TimedJob {
 		$this->syncService = $syncService;
 		$this->mailboxSync = $mailboxSync;
 		$this->logger = $logger;
-		$this->jobList = $jobList;
 
 		$this->setInterval(3600);
 		/**
