@@ -56,6 +56,8 @@ class SyncJobTest extends TestCase {
 		$indexedArgs = [];
 		fwrite(STDERR, "3\n");
 
+		failfailfail();
+
 		$orderedArgs = [];
 		$parameters = $constructor->getParameters();
 		fwrite(STDERR, "4\n");
