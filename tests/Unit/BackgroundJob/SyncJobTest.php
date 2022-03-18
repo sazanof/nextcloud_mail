@@ -87,12 +87,15 @@ class SyncJobTest extends TestCase {
 		$this->serviceMock->getParameter('time')
 			->method('getTime')
 			->willReturn(500000);
+		fwrite(STDERR, "12\n");
 		// Set our common argument
 		$this->job->setArgument([
 			'accountId' => 123,
 		]);
+		fwrite(STDERR, "13\n");
 		// Set a fake ID
 		$this->job->setId(99);
+		fwrite(STDERR, "14\n");
 	}
 
 	public function testAccountDoesntExist(): void {
