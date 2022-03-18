@@ -48,7 +48,6 @@ class SyncJobTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->createServiceMock();
 		$reflectedClass = new ReflectionClass(SyncJob::class);
 		$constructor = $reflectedClass->getConstructor();
 		$indexedArgs = [];
