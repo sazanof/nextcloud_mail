@@ -27,15 +27,12 @@ namespace OCA\Mail\Tests\Unit\BackgroundJob;
 
 use ChristophWurst\Nextcloud\Testing\ServiceMockObject;
 use ChristophWurst\Nextcloud\Testing\TestCase;
-use InvalidArgumentException;
 use OC\BackgroundJob\JobList;
 use OCA\Mail\Account;
 use OCA\Mail\BackgroundJob\SyncJob;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\ILogger;
 use OCP\IUser;
-use ReflectionClass;
-use Throwable;
 use function fwrite;
 
 class SyncJobTest extends TestCase {
@@ -51,35 +48,7 @@ class SyncJobTest extends TestCase {
 		parent::setUp();
 		fwrite(STDERR, "2\n");
 
-		$reflectedClass = new ReflectionClass(SyncJob::class);
-		$constructor = $reflectedClass->getConstructor();
-		$indexedArgs = [];
-		fwrite(STDERR, "3\n");
-
-		$orderedArgs = [];
-		$parameters = $constructor->getParameters();
-		fwrite(STDERR, "4\n");
-		foreach ($parameters as $parameter) {
-			if (isset($custom[$parameter->getName()])) {
-				fwrite(STDERR, "CUSTOM\n");
-				$indexedArgs[$parameter->getName()] = $orderedArgs[] = $custom[$parameter->getName()];
-			} else if ($parameter->getType() !== null) {
-				fwrite(STDERR, "5\n");
-				$originalClassName = $parameter->getType()->getName();
-				fwrite(STDERR, $originalClassName . "\n");
-				$mockObject = $this->createMock($originalClassName);
-				fwrite(STDERR, "6\n");
-				$orderedArgs[] = $mockObject;
-				$indexedArgs[$parameter->getName()] = $mockObject;
-				fwrite(STDERR, "7\n");
-			} else {
-				throw new InvalidArgumentException("Can not defer mock for constructor parameter " . $parameter->getName() . " of class $class");
-			}
-		}
-		fwrite(STDERR, "8\n");
-		$service = new SyncJob(...$orderedArgs);
-		fwrite(STDERR, "9\n");
-		$this->serviceMock = new ServiceMockObject(SyncJob::class, $indexedArgs, $service);
+		$this->serviceMock = $this->createServiceMock(SyncJob::class);
 		fwrite(STDERR, "10\n");
 		$this->job = $this->serviceMock->getService();
 		fwrite(STDERR, "11\n");
