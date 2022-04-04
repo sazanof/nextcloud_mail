@@ -153,17 +153,21 @@
 				:upload-size-limit="attachmentSizeLimit"
 				@upload="onAttachmentsUploading" />
 			<div class="composer-actions-right">
-				<button v-if="savingDraft === false"
+				<p class="composer-actions-draft">
+					<span id="draft-status">{{ draftStatusMessage }}</span>
+				</p>
+				<button v-if="!savingDraft && !canSaveDraft"
+					class="button"
+					:title="t('mail', 'Save draft')"
+					@click="onSave">
+					{{ t('mail', 'Save draft') }}
+				</button>
+				<button v-if="!savingDraft"
 					class="button"
 					:title="t('mail', 'Discard & close draft')"
 					@click="discardDraft">
 					{{ t('mail', 'Discard draft') }}
 				</button>
-				<p class="composer-actions-draft">
-					<span v-if="!canSaveDraft" id="draft-status">{{ t('mail', 'Cannot save draft because this account does not have a drafts mailbox configured.') }}</span>
-					<span v-else-if="savingDraft === true" id="draft-status">{{ t('mail', 'Saving draft …') }}</span>
-					<span v-else-if="savingDraft === false" id="draft-status">{{ t('mail', 'Draft saved') }}</span>
-				</p>
 				<Actions>
 					<ActionButton icon="icon-upload" @click="onAddLocalAttachment">
 						{{
@@ -372,6 +376,11 @@ export default {
 			required: false,
 			default: () => [],
 		},
+		canSaveDraft: {
+			type: Boolean,
+			required: false,
+			default: true,
+		},
 	},
 	data() {
 		let bodyVal = toHtml(this.body).value
@@ -391,7 +400,6 @@ export default {
 			noReply: this.to.some((to) => to.email.startsWith('noreply@') || to.email.startsWith('no-reply@')),
 			draftsPromise: Promise.resolve(),
 			attachmentsPromise: Promise.resolve(),
-			canSaveDraft: true,
 			savingDraft: undefined,
 			saveDraftDebounced: debounce(10 * 1000, this.saveDraft),
 			state: STATES.EDITING,
@@ -414,6 +422,7 @@ export default {
 			loadingIndicatorTo: false,
 			loadingIndicatorCc: false,
 			loadingIndicatorBcc: false,
+			isClickedSaveExplicitly: false,
 		}
 	},
 	computed: {
@@ -479,6 +488,18 @@ export default {
 			}
 
 			return this.encrypt ? t('mail', 'Encrypt and send') : t('mail', 'Send unencrypted')
+		},
+
+		draftStatusMessage() {
+			if (this.savingDraft) {
+				return t('mail', 'Saving draft …')
+			} else if (this.canSaveDraft) {
+				return t('calendar', 'Draft saved')
+			} else if (this.isClickedSaveExplicitly && !this.canSaveDraft) {
+				return t('mail', 'Draft could not be saved. Please try again')
+			} else {
+				return t('mail', 'Draft could not be saved')
+			}
 		},
 	},
 	watch: {
@@ -653,8 +674,7 @@ export default {
 				})
 				.then((uid) => {
 					// It works (again)
-					this.canSaveDraft = true
-
+					this.$emit('update:canSaveDraft', true)
 					return uid
 				})
 				.catch(async(error) => {
@@ -668,7 +688,7 @@ export default {
 						},
 					})
 					if (!canSave) {
-						this.canSaveDraft = false
+						this.$emit('update:canSaveDraft', false)
 					}
 				})
 				.then((uid) => {
@@ -677,8 +697,19 @@ export default {
 				})
 			return this.draftsPromise
 		},
+		callSaveDraft(withDebounce, ...args) {
+			if (withDebounce) {
+				return this.saveDraftDebounced(...args)
+			} else {
+				return this.saveDraft(...args)
+			}
+		},
+		onSave() {
+			this.callSaveDraft(false, this.getMessageData)
+			this.isClickedSaveExplicitly = true
+		},
 		onInputChanged() {
-			this.saveDraftDebounced(this.getMessageData)
+			this.callSaveDraft(true, this.getMessageData)
 			if (this.appendSignature) {
 				const signatureValue = toHtml(detect(this.selectedAlias.signature)).value
 				this.bus.$emit('insertSignature', signatureValue, this.selectedAlias.signatureAboveQuote)

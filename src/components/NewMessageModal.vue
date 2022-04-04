@@ -12,6 +12,7 @@
 			:body="composerData.body"
 			:draft="saveDraft"
 			:send="sendMessage"
+			:can-save-draft.sync="canSaveDraft"
 			:forwarded-messages="forwardedMessages" />
 	</Modal>
 </template>
@@ -48,6 +49,7 @@ export default {
 			original: undefined,
 			originalBody: undefined,
 			fetchingTemplateMessage: true,
+			canSaveDraft: true,
 		}
 	},
 	computed: {
@@ -114,7 +116,14 @@ export default {
 				...data,
 				body: data.isHtml ? data.body.value : toPlain(data.body).value,
 			}
-			const { id } = await saveDraft(data.account, dataForServer)
+			let id
+			await saveDraft(data.account, dataForServer)
+				.then(obj => {
+					id = obj.id
+					this.canSaveDraft = true
+				}, () => {
+					this.canSaveDraft = false
+				})
 
 			// Remove old draft envelope
 			this.$store.commit('removeEnvelope', { id: data.draftId })
