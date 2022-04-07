@@ -22,7 +22,7 @@ jobs:
         php-version: ${{ matrix.php-versions }}
         tools: composer:v1
         extensions: ctype,curl,dom,gd,iconv,intl,json,mbstring,openssl,posix,sqlite,xml,zip,gmp
-        coverage: none
+        coverage: xdebug
     - name: Checkout Nextcloud
       run: git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b ${{ matrix.nextcloud-versions }} nextcloud
     - name: Install Nextcloud
@@ -105,7 +105,7 @@ jobs:
                 php-version: ${{ matrix.php-versions }}
                 tools: composer:v1
                 extensions: ctype,curl,dom,gd,iconv,intl,json,mbstring,openssl,posix,sqlite,xml,zip,gmp
-                coverage: none
+                coverage: xdebug
           - name: Checkout Nextcloud
             run: git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b ${{ matrix.nextcloud-versions }} nextcloud
           - name: Install Nextcloud
