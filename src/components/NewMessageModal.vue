@@ -97,47 +97,41 @@ export default {
 		},
 		async sendMessage(data) {
 			logger.debug('sending message', { data })
+			const now = new Date().getTime()
+			const dataForServer = {
+				accountId: data.account,
+				subject: data.subject,
+				body: data.isHtml ? data.body.value : toPlain(data.body).value,
+				isHtml: data.isHtml,
+				to: data.to,
+				cc: data.cc,
+				bcc: data.bcc,
+				attachments: data.attachments,
+				aliasId: null,
+				inReplyToMessageId: null,
+				sendAt: data.sendAt ?? Math.floor(now / 1000),
+			}
+			if (dataForServer.sendAt < now) {
+				dataForServer.sendAt = now
+			}
 			if (this.composerMessage.type === 'outbox') {
-				const now = new Date().getTime()
-				const dataForServer = {
-					accountId: data.account,
-					subject: data.subject,
-					body: data.isHtml ? data.body.value : toPlain(data.body).value,
-					isHtml: data.isHtml,
-					to: data.to,
-					cc: data.cc,
-					bcc: data.bcc,
-					attachments: data.attachments,
-					aliasId: data.aliasId,
-					inReplyToMessageId: null,
-					sendAt: Math.floor(now / 1000), // JS timestamp is in milliseconds
-				}
-				const message = await this.$store.dispatch('outbox/updateMessage', {
+				// TODO: update the message instead of enqueing another time
+				const message = await this.$store.dispatch('outbox/enqueueMessage', {
 					message: dataForServer,
 					id: this.composerData.id,
 				})
-
-				await this.$store.dispatch('outbox/sendMessage', { id: message.id })
-			} else {
-				const now = new Date().getTime()
-				const dataForServer = {
-					accountId: data.account,
-					subject: data.subject,
-					body: data.isHtml ? data.body.value : toPlain(data.body).value,
-					isHtml: data.isHtml,
-					to: data.to,
-					cc: data.cc,
-					bcc: data.bcc,
-					attachments: data.attachments,
-					aliasId: data.aliasId,
-					inReplyToMessageId: null,
-					sendAt: Math.floor(now / 1000), // JS timestamp is in milliseconds
+				if (!data.sendAt) {
+					await this.$store.dispatch('outbox/sendMessage', { id: message.id })
 				}
+
+			} else {
 				const message = await this.$store.dispatch('outbox/enqueueMessage', {
 					message: dataForServer,
 				})
 
-				await this.$store.dispatch('outbox/sendMessage', { id: message.id })
+				if (!data.sendAt) {
+					await this.$store.dispatch('outbox/sendMessage', { id: message.id })
+				}
 
 				if (data.draftId) {
 					// Remove old draft envelope
