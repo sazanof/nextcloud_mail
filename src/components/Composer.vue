@@ -4,6 +4,7 @@
 			<label class="from-label" for="from">
 				{{ t('mail', 'From') }}
 			</label>
+			<div class="composer-fields--custom">
 			<Multiselect
 				id="from"
 				:value="selectedAlias"
@@ -15,82 +16,143 @@
 				:placeholder="t('mail', 'Select account')"
 				:clear-on-select="false"
 				@select="onAliasChange" />
+				<button
+					:title="t('mail','Toggle recipients list mode')"
+					:class="{'active':!autoLimit}"
+					@click.prevent="autoLimit = !autoLimit">
+					<UnfoldMoreHorizontal v-if="autoLimit" :size="24" />
+					<UnfoldLessHorizontal v-else :size="24" />
+				</button>
+			</div>
 		</div>
 		<div class="composer-fields">
 			<label class="to-label" for="to">
 				{{ t('mail', 'To') }}
 			</label>
-			<Multiselect
-				id="to"
-				ref="toLabel"
-				v-model="selectTo"
-				:options="selectableRecipients"
-				:taggable="true"
-				label="label"
-				track-by="email"
-				:limit="4"
-				:multiple="true"
-				:placeholder="t('mail', 'Contact or email address …')"
-				:clear-on-select="true"
-				:close-on-select="false"
-				:show-no-options="false"
-				:preserve-search="true"
-				:hide-selected="true"
-				:loading="loadingIndicatorTo"
-				@input="callSaveDraft(true, getMessageData)"
-				@tag="onNewToAddr"
-				@search-change="onAutocomplete($event, 'to')" />
-			<a v-if="!showCC"
-				class="copy-toggle"
-				href="#"
-				@click.prevent="showCC = true">
-				{{ t('mail', '+ Cc/Bcc') }}
-			</a>
+			<div class="composer-fields--custom">
+				<Multiselect :class="{'opened': !autoLimit}"
+					id="to"
+					ref="toLabel"
+					v-model="selectTo"
+					:options="selectableRecipients"
+					:taggable="true"
+					label="label"
+					track-by="email"
+					:multiple="true"
+					:placeholder="t('mail', 'Contact or email address …')"
+					:clear-on-select="true"
+					:close-on-select="false"
+					:show-no-options="false"
+					:preserve-search="true"
+					:hide-selected="true"
+					:loading="loadingIndicatorTo"
+					v-bind:auto-limit="autoLimit"
+					@input="callSaveDraft(true, getMessageData)"
+					@tag="onNewToAddr"
+					@search-change="onAutocomplete($event, 'to')">
+					<template #tag="{ option }">
+						<RecipientListItem
+						:option="option"
+						@remove-recipient="onRemoveRecipient(option, 'to')" />
+					</template>
+					<template #option="{ option }">
+						<div class="multiselect__tag multiselect__tag-custom">
+							<ListItemIcon
+								:no-margin="true"
+								:title="option.label"
+								:subtitle="option.email"
+								:avatar-size="24" />
+						</div>
+					</template>
+				</Multiselect>
+				<button
+					v-if="!showCC"
+					:title="t('mail', '+ Cc/Bcc')"
+					@click.prevent="showCC = !showCC">
+					<AccountMultiplePlus :size="24" />
+				</button>
+			</div>
 		</div>
 		<div v-if="showCC" class="composer-fields">
 			<label for="cc" class="cc-label">
 				{{ t('mail', 'Cc') }}
 			</label>
-			<Multiselect
-				id="cc"
-				v-model="selectCc"
-				:options="selectableRecipients"
-				:taggable="true"
-				label="label"
-				track-by="email"
-				:multiple="true"
-				:placeholder="t('mail', '')"
-				:clear-on-select="true"
-				:show-no-options="false"
-				:preserve-search="true"
-				:loading="loadingIndicatorCc"
-				@input="callSaveDraft(true, getMessageData)"
-				@tag="onNewCcAddr"
-				@search-change="onAutocomplete($event, 'cc')">
-				<span slot="noOptions">{{ t('mail', 'No contacts found.') }}</span>
-			</Multiselect>
+			<div class="composer-fields--custom">
+				<Multiselect :class="{'opened': !autoLimit}"
+					id="cc"
+					v-model="selectCc"
+					:options="selectableRecipients"
+					:taggable="true"
+					label="label"
+					track-by="email"
+					:multiple="true"
+					:placeholder="t('mail', 'Contact or email address …')"
+					:clear-on-select="true"
+					:show-no-options="false"
+					:preserve-search="true"
+					:loading="loadingIndicatorCc"
+					v-bind:auto-limit="autoLimit"
+					:hide-selected="true"
+					@input="callSaveDraft(true, getMessageData)"
+					@tag="onNewCcAddr"
+					@search-change="onAutocomplete($event, 'cc')">
+					<template #tag="{ option }">
+						<RecipientListItem
+						:option="option"
+						@remove-recipient="onRemoveRecipient(option, 'cc')" />
+					</template>
+					<template #option="{ option }">
+						<div class="multiselect__tag multiselect__tag-custom">
+							<ListItemIcon
+								:no-margin="true"
+								:title="option.label"
+								:subtitle="option.email"
+								:avatar-size="24" />
+						</div>
+					</template>
+					<span slot="noOptions">{{ t('mail', '') }}</span>
+				</Multiselect>
+			</div>
 		</div>
 		<div v-if="showCC" class="composer-fields">
 			<label for="bcc" class="bcc-label">
 				{{ t('mail', 'Bcc') }}
 			</label>
-			<Multiselect
-				id="bcc"
-				v-model="selectBcc"
-				:options="selectableRecipients"
-				:taggable="true"
-				label="label"
-				track-by="email"
-				:multiple="true"
-				:placeholder="t('mail', '')"
-				:show-no-options="false"
-				:preserve-search="true"
-				:loading="loadingIndicatorBcc"
-				@input="callSaveDraft(true, getMessageData)"
-				@tag="onNewBccAddr"
-				@search-change="onAutocomplete($event, 'bcc')">
-				<span slot="noOptions">{{ t('mail', 'No contacts found.') }}</span>
-			</Multiselect>
+			<div class="composer-fields--custom">
+				<Multiselect :class="{'opened': !autoLimit}"
+					id="bcc"
+					v-model="selectBcc"
+					:options="selectableRecipients"
+					:taggable="true"
+					label="label"
+					track-by="email"
+					:multiple="true"
+					:placeholder="t('mail', 'Contact or email address …')"
+					:show-no-options="false"
+					:clear-on-select="true"
+					:preserve-search="true"
+					:loading="loadingIndicatorBcc"
+					:hide-selected="true"
+					@input="callSaveDraft(true, getMessageData)"
+					@tag="onNewBccAddr"
+					@search-change="onAutocomplete($event, 'bcc')">
+					<template #tag="{ option }">
+						<RecipientListItem
+						:option="option"
+						@remove-recipient="onRemoveRecipient(option, 'bcc')" />
+					</template>
+					<template #option="{ option }">
+						<div class="multiselect__tag multiselect__tag-custom">
+							<ListItemIcon
+								:no-margin="true"
+								:title="option.label"
+								:subtitle="option.email"
+								:avatar-size="24" />
+						</div>
+					</template>
+					<span slot="noOptions">{{ t('mail', 'No contacts found.') }}</span>
+				</Multiselect>
+			</div>
 		</div>
 		<div class="composer-fields">
 			<label for="subject" class="subject-label hidden-visually">
@@ -357,6 +419,11 @@ import ComposerAttachments from './ComposerAttachments'
 import Download from 'vue-material-design-icons/Download'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import ListItemIcon from '@nextcloud/vue/dist/Components/ListItemIcon'
+import RecipientListItem from './RecipientListItem'
+import UnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal'
+import UnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal'
+import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus'
 import { showError } from '@nextcloud/dialogs'
 import { translate as t, getCanonicalLocale, getFirstDay, getLocale } from '@nextcloud/l10n'
 import Vue from 'vue'
@@ -418,8 +485,13 @@ export default {
 		Multiselect,
 		TextEditor,
 		EmptyContent,
+		ListItemIcon,
+		RecipientListItem,
 		Send,
 		SendClock,
+		UnfoldMoreHorizontal,
+		UnfoldLessHorizontal,
+		AccountMultiplePlus
 	},
 	props: {
 		fromAccount: {
@@ -540,6 +612,7 @@ export default {
 					return value ? moment(value, 'LLL').toDate() : null
 				},
 			},
+			autoLimit: true,
 			editorRichInputTextReady: false,
 		}
 	},
@@ -1070,6 +1143,37 @@ export default {
 			const minimumDate = new Date(now.getTime())
 			return date.getTime() <= minimumDate
 		},
+		/**
+		 * Remove recipient from recipients array (To,Cc,Bcc)
+		 *
+		 * @param {Array} option Current option from Multiselect
+		 * @param {Array} list List of recipients (ex. this.selectTo)
+		 */
+		onRemoveRecipient(option, field){
+			switch (field){
+				case 'to':
+					this.removeRecipientTo(option)
+					break
+				case 'cc':
+					this.removeRecipientCc(option)
+					break
+				case 'bcc':
+					this.removeRecipientBcc(option)
+					break
+			}
+		},
+		removeRecipient(option, list){
+			return list.filter((recipient) => recipient.email !== option.email)
+		},
+		removeRecipientTo(option){
+			this.selectTo = this.removeRecipient(option,this.selectTo)
+		},
+		removeRecipientCc(option){
+			this.selectCc = this.removeRecipient(option,this.selectCc)
+		},
+		removeRecipientBcc(option){
+			this.selectBcc = this.removeRecipient(option,this.selectBcc)
+		}
 	},
 }
 </script>
@@ -1087,8 +1191,19 @@ export default {
 
 .composer-fields {
 	display: flex;
-	align-items: center;
 	border-top: 1px solid var(--color-border);
+	align-items: flex-start;
+
+	.multiselect.multiselect--multiple::after {
+		position:absolute;
+		right: 0;
+		top: auto;
+		bottom:8px
+	}
+
+	.multiselect__tag {
+		position: relative;
+	}
 
 	&.mail-account {
 		border-top: none;
@@ -1107,6 +1222,29 @@ export default {
 		max-width: none;
 		border: none;
 		border-radius: 0;
+	}
+
+	.composer-fields--custom {
+		display: flex;
+		align-items: flex-start;
+		flex-wrap: wrap;
+		padding-top:5px;
+		width: calc(100% - 120px);
+
+		button {
+			margin-top: 0;
+			background-color: transparent;
+			border:none;
+			opacity: 0.5
+		}
+
+		button.active,button:active {
+			opacity: 1;
+		}
+
+		.multiselect {
+			width: calc(100% - 150px);
+		}
 	}
 
 	.multiselect {
@@ -1161,6 +1299,7 @@ export default {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-weight: bold;
 }
 
 .bcc-label {
@@ -1185,7 +1324,16 @@ export default {
 ::v-deep .multiselect .multiselect__tags {
 	border: none !important;
 }
+::v-deep [data-select="create"] .avatardiv--unknown {
+	background: var(--color-text-maxcontrast) !important;
+}
+::v-deep .multiselect.opened .multiselect__tags .multiselect__tags-wrap {
+	flex-wrap: wrap;
+}
 
+.submit-message.send.primary.icon-confirm-white {
+	color: var(--color-main-background);
+}
 .sending-hint {
 	height: 50px;
 	margin-top: 50px;
