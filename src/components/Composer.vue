@@ -33,7 +33,7 @@
 					track-by="email"
 					:multiple="true"
 					:placeholder="t('mail', 'Contact or email address …')"
-					:clear-on-select="true"
+					:clear-on-select="false"
 					:close-on-select="false"
 					:show-no-options="false"
 					:preserve-search="true"
@@ -47,6 +47,15 @@
 						<RecipientListItem
 							:option="option"
 							@remove-recipient="onRemoveRecipient(option, 'to')" />
+					</template>
+					<template #option="{ option }">
+						<div class="multiselect__tag multiselect__tag-custom">
+							<ListItemIcon
+								:no-margin="true"
+								:title="option.label"
+								:subtitle="option.email"
+								:avatar-size="24" />
+						</div>
 					</template>
 					<template #option="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
@@ -81,7 +90,7 @@
 					track-by="email"
 					:multiple="true"
 					:placeholder="t('mail', 'Contact or email address …')"
-					:clear-on-select="true"
+					:clear-on-select="false"
 					:show-no-options="false"
 					:preserve-search="true"
 					:loading="loadingIndicatorCc"
@@ -94,6 +103,15 @@
 						<RecipientListItem
 							:option="option"
 							@remove-recipient="onRemoveRecipient(option, 'cc')" />
+					</template>
+					<template #option="{ option }">
+						<div class="multiselect__tag multiselect__tag-custom">
+							<ListItemIcon
+								:no-margin="true"
+								:title="option.label"
+								:subtitle="option.email"
+								:avatar-size="24" />
+						</div>
 					</template>
 					<template #option="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
@@ -414,7 +432,6 @@ import UnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal
 import UnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal'
 import { showError } from '@nextcloud/dialogs'
 import { translate as t, getCanonicalLocale, getFirstDay, getLocale } from '@nextcloud/l10n'
-//import RecipientsModal from './RecipientsModal.vue'
 import Vue from 'vue'
 
 import { findRecipient } from '../service/AutocompleteService'
@@ -1372,7 +1389,6 @@ export default {
 ::v-deep .multiselect .multiselect__tags {
 	border: none !important;
 }
-<<<<<<< HEAD
 ::v-deep [data-select="create"] .avatardiv--unknown {
 	background: var(--color-text-maxcontrast) !important;
 }
@@ -1380,17 +1396,6 @@ export default {
 	flex-wrap: wrap;
 }
 
-=======
-::v-deep .multiselect.opened .multiselect__tags .multiselect__tags-wrap {
-	flex-wrap: wrap;
-}
-::v-deep .multiselect .multiselect__tags .multiselect__tags-wrap .multiselect__tag-custom {
-	padding:0 25px 0 0;
-	border-radius:25px;
-	border-color: transparent;
-	background-color: var(--color-background-dark);
-}
->>>>>>> Allow user to view and edit full recipients list while writing a message
 .submit-message.send.primary.icon-confirm-white {
 	color: var(--color-main-background);
 }
