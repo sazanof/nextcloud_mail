@@ -21,7 +21,6 @@
 					:class="['icon-more',{'active':!autoLimit}]"
 					@click.prevent="autoLimit = !autoLimit">
 				</button>
-				
 			</div>
 		</div>
 		<div class="composer-fields">
@@ -39,7 +38,7 @@
 					track-by="email"
 					:multiple="true"
 					:placeholder="t('mail', 'Contact or email address …')"
-					:clear-on-select="true"
+					:clear-on-select="false"
 					:close-on-select="false"
 					:show-no-options="false"
 					:preserve-search="true"
@@ -48,22 +47,28 @@
 					v-bind:auto-limit="autoLimit"
 					@keyup="onInputChanged"
 					@tag="onNewToAddr"
-					@search-change="onAutocomplete($event, 'to')"
-					:user-select="true">
+					@search-change="onAutocomplete($event, 'to')">
 					<template #tag="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
 							<ListItemIcon
 								:no-margin="true"
 								:title="option.label"
-								:avatar-size="24"
-								>
-							</ListItemIcon>
+								:avatar-size="24" />
 							<Actions>
 								<ActionButton
 									icon="icon-close"
 									@click.prevent="removeRecipientTo(option)"
 								/>
 							</Actions>
+						</div>
+					</template>
+					<template #option="{ option }">
+						<div class="multiselect__tag multiselect__tag-custom">
+							<ListItemIcon
+								:no-margin="true"
+								:title="option.label"
+								:subtitle="option.email"
+								:avatar-size="24" />
 						</div>
 					</template>
 				</Multiselect>
@@ -88,11 +93,10 @@
 					track-by="email"
 					:multiple="true"
 					:placeholder="t('mail', 'Contact or email address …')"
-					:clear-on-select="true"
+					:clear-on-select="false"
 					:show-no-options="false"
 					:preserve-search="true"
 					:loading="loadingIndicatorCc"
-					:user-select="true"
 					v-bind:auto-limit="autoLimit"
 					:hide-selected="true"
 					@keyup="onInputChanged"
@@ -103,15 +107,21 @@
 							<ListItemIcon
 								:no-margin="true"
 								:title="option.label"
-								:avatar-size="24"
-								>
-							</ListItemIcon>
+								:avatar-size="24" />
 							<Actions>
 								<ActionButton
 									icon="icon-close"
-									@click.prevent="removeRecipientCc(option)"
-								/>
+									@click.prevent="removeRecipientCc(option)" />
 							</Actions>
+						</div>
+					</template>
+					<template #option="{ option }">
+						<div class="multiselect__tag multiselect__tag-custom">
+							<ListItemIcon
+								:no-margin="true"
+								:title="option.label"
+								:subtitle="option.email"
+								:avatar-size="24" />
 						</div>
 					</template>
 					<span slot="noOptions">{{ t('mail', '') }}</span>
@@ -133,29 +143,35 @@
 					:multiple="true"
 					:placeholder="t('mail', '')"
 					:show-no-options="false"
+					:clear-on-select="false"
 					:preserve-search="true"
 					:loading="loadingIndicatorBcc"
 					:hide-selected="true"
 					@keyup="onInputChanged"
 					@tag="onNewBccAddr"
-					@search-change="onAutocomplete($event, 'bcc')"
-					:user-select="true">
-						<template #tag="{ option }">
-							<div class="multiselect__tag multiselect__tag-custom">
-								<ListItemIcon
-									:no-margin="true"
-									:title="option.label"
-									:avatar-size="24"
-									>
-								</ListItemIcon>
-								<Actions>
-									<ActionButton
-										icon="icon-close"
-										@click.prevent="removeRecipientBcc(option)"
-									/>
-								</Actions>
-							</div>
-						</template>
+					@search-change="onAutocomplete($event, 'bcc')">
+					<template #tag="{ option }">
+						<div class="multiselect__tag multiselect__tag-custom">
+							<ListItemIcon
+								:no-margin="true"
+								:title="option.label"
+								:avatar-size="24" />
+							<Actions>
+								<ActionButton
+									icon="icon-close"
+									@click.prevent="removeRecipientBcc(option)"	/>
+							</Actions>
+						</div>
+					</template>
+					<template #option="{ option }">
+						<div class="multiselect__tag multiselect__tag-custom">
+							<ListItemIcon
+								:no-margin="true"
+								:title="option.label"
+								:subtitle="option.email"
+								:avatar-size="24" />
+						</div>
+					</template>
 					<span slot="noOptions">{{ t('mail', 'No contacts found.') }}</span>
 				</Multiselect>
 			</div>
@@ -419,7 +435,6 @@ import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import ListItemIcon from '@nextcloud/vue/dist/Components/ListItemIcon'
 import { showError } from '@nextcloud/dialogs'
 import { translate as t, getCanonicalLocale, getFirstDay, getLocale } from '@nextcloud/l10n'
-//import RecipientsModal from './RecipientsModal.vue'
 import Vue from 'vue'
 
 import ComposerAttachments from './ComposerAttachments'
@@ -477,7 +492,6 @@ export default {
 		TextEditor,
 		EmptyContent,
 		ListItemIcon,
-		//RecipientsModal,
 		SendClock,
 	},
 	props: {
