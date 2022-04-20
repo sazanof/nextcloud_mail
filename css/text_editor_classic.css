@@ -1,0 +1,26 @@
+.ck.ck-editor {
+    margin: 10px;
+	width:calc(100% - 20px)
+}
+.app-settings-section .ck.ck-editor {
+    margin:10px 0;
+	width: 100%
+}
+.ck.ck-toolbar {
+    border-color: var(--color-background-darker);
+    background-color:white;
+}
+.ck-rounded-corners .ck.ck-editor__editable {
+    margin-top:0;
+    width: 100%;
+    border-color: var(---color-background-darker);
+    min-height: 200px;
+}
+
+.ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+    border-color: var(--color-background-darker)
+}
+
+.ck.ck-editor__editable_inline {
+    padding: var(--ck-spacing-standard) 1em;
+}
