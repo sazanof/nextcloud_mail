@@ -62,7 +62,11 @@ use OCP\AppFramework\Db\Entity;
  * @method int getLastMailboxSync()
  * @method void setLastMailboxSync(int $time)
  * @method string getEditorMode()
+ * @method int getEditorMoreFeatures()
+ * @method string getEditorPosition()
  * @method void setEditorMode(string $editorMode)
+ * @method void setEditorPosition(string $editorPosition)
+ * @method void setEditorMoreFeatures(bool $editorMoreFeatures)
  * @method int|null getProvisioningId()
  * @method void setProvisioningId(int $provisioningId)
  * @method int getOrder()
@@ -109,6 +113,8 @@ class MailAccount extends Entity {
 	protected $signature;
 	protected $lastMailboxSync;
 	protected $editorMode;
+	protected $editorPosition;
+	protected $editorMoreFeatures;
 	protected $order;
 	protected $showSubscribedOnly;
 	protected $personalNamespace;
@@ -224,6 +230,8 @@ class MailAccount extends Entity {
 			'imapSslMode' => $this->getInboundSslMode(),
 			'signature' => $this->getSignature(),
 			'editorMode' => $this->getEditorMode(),
+			'editorPosition' => $this->getEditorPosition(),
+			'editorMoreFeatures' => intval($this->getEditorMoreFeatures()),
 			'provisioningId' => $this->getProvisioningId(),
 			'showSubscribedOnly' => ($this->getShowSubscribedOnly() === true),
 			'personalNamespace' => $this->getPersonalNamespace(),

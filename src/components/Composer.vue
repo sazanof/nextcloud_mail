@@ -207,6 +207,8 @@
 				key="editor-rich"
 				v-model="bodyVal"
 				:html="true"
+				:position="this.editorPosition"
+				:moreFeatures="this.editorMoreFeatures === 1"
 				name="body"
 				class="message-body"
 				:placeholder="t('mail', 'Write message …')"
@@ -613,6 +615,8 @@ export default {
 				keysMissing: [],
 			},
 			editorMode: (this.body?.format !== 'html') ? 'plaintext' : 'html',
+			editorPosition: null,
+			editorMoreFeatures: null,
 			addShareLink: t('mail', 'Add share link from {productName} Files', { productName: OC?.theme?.name ?? 'Nextcloud' }),
 			requestMdn: false,
 			appendSignature: true,
@@ -648,6 +652,8 @@ export default {
 					aliasId: null,
 					selectId: cnt++,
 					editorMode: account.editorMode,
+					editorMoreFeatures: account.editorMoreFeatures,
+					editorPosition: account.editorPosition,
 					signature: account.signature,
 					name: account.name,
 					emailAddress: account.emailAddress,
@@ -659,6 +665,8 @@ export default {
 						aliasId: alias.id,
 						selectId: cnt++,
 						editorMode: account.editorMode,
+						editorMoreFeatures: account.editorMoreFeatures,
+						editorPosition: account.editorPosition,
 						signature: alias.signature,
 						name: alias.name,
 						emailAddress: alias.alias,
@@ -847,6 +855,8 @@ export default {
 			if (previous === NO_ALIAS_SET && (!this.body || this.body.value === '')) {
 				this.editorMode = this.selectedAlias.editorMode
 			}
+			this.editorMoreFeatures = this.selectedAlias.editorMoreFeatures
+			this.editorPosition = this.selectedAlias.editorPosition
 		},
 		async checkRecipientsKeys() {
 			if (!this.encrypt || !this.mailvelope.available) {
