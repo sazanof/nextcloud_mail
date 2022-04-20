@@ -24,3 +24,11 @@
 .ck.ck-editor__editable_inline {
     padding: var(--ck-spacing-standard) 1em;
 }
+
+.ck.ck-content ul,.ck.ck-content  ol {
+    list-style:inherit;
+    margin: 10px 20px;
+}
+.ck.ck-content a {
+    color: #07d;
+}

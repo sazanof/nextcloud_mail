@@ -50,6 +50,12 @@
 			</p>
 			<EditorSettings :account="account" />
 		</AppSettingsSection>
+		<AppSettingsSection v-if="account.editorMode === 'richtext'" :title="t('mail', 'Editor extended settings')">
+			<p class="settings-hint">
+				{{ t('mail', 'Switching the modes of operation of the text editor and enabling advanced formatting features.') }}
+			</p>
+			<EditorExtendedSettings :account="account" />
+		</AppSettingsSection>
 		<AppSettingsSection :title=" t('mail', 'Default folders')">
 			<p class="settings-hint">
 				{{
@@ -94,6 +100,7 @@
 <script>
 import AccountForm from '../components/AccountForm'
 import EditorSettings from '../components/EditorSettings'
+import EditorExtendedSettings from '../components/EditorExtendedSettings'
 import AccountDefaultsSettings from '../components/AccountDefaultsSettings'
 import Logger from '../logger'
 import SignatureSettings from '../components/SignatureSettings'
@@ -112,6 +119,7 @@ export default {
 		AccountForm,
 		AliasSettings,
 		EditorSettings,
+		EditorExtendedSettings,
 		SignatureSettings,
 		AppSettingsDialog,
 		AppSettingsSection,
