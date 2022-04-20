@@ -232,6 +232,8 @@ class AccountsController extends Controller {
 	 *
 	 * @param int $id
 	 * @param string|null $editorMode
+	 * @param string|null $editorPosition
+	 * @param bool|null $editorMoreFeatures
 	 * @param int|null $order
 	 * @param bool|null $showSubscribedOnly
 	 * @param int|null $draftsMailboxId
@@ -245,6 +247,8 @@ class AccountsController extends Controller {
 	 */
 	public function patchAccount(int $id,
 								 string $editorMode = null,
+								 string $editorPosition = null,
+								 int $editorMoreFeatures = null,
 								 int $order = null,
 								 bool $showSubscribedOnly = null,
 								 int $draftsMailboxId = null,
@@ -269,6 +273,12 @@ class AccountsController extends Controller {
 		}
 		if ($editorMode !== null) {
 			$dbAccount->setEditorMode($editorMode);
+		}
+		if ($editorPosition !== null) {
+			$dbAccount->setEditorPosition($editorPosition);
+		}
+		if ($editorMoreFeatures !== null) {
+			$dbAccount->setEditorMoreFeatures($editorMoreFeatures);
 		}
 		if ($order !== null) {
 			$dbAccount->setOrder($order);
