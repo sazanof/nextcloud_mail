@@ -31,8 +31,10 @@
 
 <script>
 import CKEditor from '@ckeditor/ckeditor5-vue2'
-import AlignmentPlugin from '@ckeditor/ckeditor5-alignment/src/alignment'
 import Editor from '@ckeditor/ckeditor5-editor-balloon/src/ballooneditor'
+import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor'
+
+import AlignmentPlugin from '@ckeditor/ckeditor5-alignment/src/alignment'
 import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials'
 import BlockQuotePlugin from '@ckeditor/ckeditor5-block-quote/src/blockquote'
 import BoldPlugin from '@ckeditor/ckeditor5-basic-styles/src/bold'
@@ -46,11 +48,21 @@ import RemoveFormat from '@ckeditor/ckeditor5-remove-format/src/removeformat'
 import SignaturePlugin from '../ckeditor/signature/SignaturePlugin'
 import StrikethroughPlugin from '@ckeditor/ckeditor5-basic-styles/src/strikethrough'
 import QuotePlugin from '../ckeditor/quote/QuotePlugin'
+import Table from '@ckeditor/ckeditor5-table/src/table'
+import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar'
+import TableProperties from '@ckeditor/ckeditor5-table/src/tableproperties'
+import TableCellProperties from '@ckeditor/ckeditor5-table/src/tablecellproperties'
+import TableCaption from '@ckeditor/ckeditor5-table/src/tablecaption'
+import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting'
+import GeneralHtmlSupport from '@ckeditor/ckeditor5-html-support/src/generalhtmlsupport'
+
 
 import { getLanguage } from '@nextcloud/l10n'
 import DOMPurify from 'dompurify'
 
 import logger from '../logger'
+
+import '../../css/text_editor_classic.css'
 
 export default {
 	name: 'TextEditor',
@@ -65,6 +77,14 @@ export default {
 		html: {
 			type: Boolean,
 			default: false,
+		},
+		position: {
+			type: String,
+			default: 'balloon'
+		},
+		moreFeatures: {
+			type: Boolean,
+			default: false
 		},
 		placeholder: {
 			type: String,
@@ -82,28 +102,71 @@ export default {
 	data() {
 		const plugins = [EssentialsPlugin, ParagraphPlugin, SignaturePlugin, QuotePlugin]
 		const toolbar = ['undo', 'redo']
+		let tableParams = {}
 
 		if (this.html) {
 			plugins.push(...[HeadingPlugin, AlignmentPlugin, BoldPlugin, ItalicPlugin, BlockQuotePlugin, LinkPlugin, ListStyle, FontPlugin, RemoveFormat, StrikethroughPlugin])
 			toolbar.unshift(...['heading', 'fontFamily', 'fontSize', 'bold', 'italic', 'fontColor', 'alignment', 'bulletedList', 'numberedList', 'blockquote', 'fontBackgroundColor', 'strikethrough', 'link', 'removeFormat'])
+			if(this.moreFeatures){
+				plugins.push(...[Table, TableToolbar, TableCaption, TableProperties, TableCellProperties, SourceEditing, GeneralHtmlSupport])
+				toolbar.push(...['insertTable','|','SourceEditing'])
+				tableParams = {
+					contentToolbar: [
+						'tableProperties', 'tableCellProperties','toggleTableCaption', 'tableColumn', 'tableRow', 'mergeTableCells'
+					],
+				}
+			}
+		}
+
+		let _editor = null;
+		switch (this.position){
+			case 'classic':
+				_editor = ClassicEditor;
+				break;
+			default: 
+				_editor = Editor
 		}
 
 		return {
 			text: '',
 			ready: false,
-			editor: Editor,
+			editor: _editor,
 			config: {
 				placeholder: this.placeholder,
 				plugins,
 				toolbar: {
 					items: toolbar,
+					shouldNotGroupWhenFull: false
 				},
 				language: 'en',
+				table: tableParams,
+				htmlSupport: {
+            		allow: [
+						{
+							name: /.*/,
+							attributes: true,
+							classes: true,
+							styles: true
+						}
+					],
+					disallow: [
+						{
+							name: /^(script|style|iframe)$/,
+							attributes: true,
+							classes: true,
+							styles: true
+						}
+					]
+				}
 			},
+			width:"100%"
 		}
 	},
 	computed: {
 		sanitizedValue() {
+			if(this.html && this.moreFeatures){
+				return this.value
+			}
 			return DOMPurify.sanitize(this.value, {
 				FORBID_TAGS: ['style'],
 			})
@@ -112,7 +175,7 @@ export default {
 	watch: {
 		sanitizedValue(newVal) {
 			// needed for reset in composer
-			this.text = newVal
+			//this.text = newVal
 		},
 	},
 	beforeMount() {
@@ -127,11 +190,12 @@ export default {
 
 			try {
 				logger.debug(`loading ${language} translations for CKEditor`)
+				
 				await import(
 					/* webpackMode: "lazy-once" */
 					/* webpackPrefetch: true */
 					/* webpackPreload: true */
-					`@ckeditor/ckeditor5-build-balloon/build/translations/${language}`
+					`@ckeditor/ckeditor5-build-classic/build/translations/${language}`
 				)
 				this.showEditor(language)
 			} catch (error) {
@@ -142,7 +206,6 @@ export default {
 		showEditor(language) {
 			logger.debug(`using "${language}" as CKEditor language`)
 			this.config.language = language
-
 			this.ready = true
 		},
 		onEditorReady(editor) {
