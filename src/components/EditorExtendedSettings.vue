@@ -26,7 +26,7 @@
 				v-model="editorMoreFeatures"
 				type="checkbox"
 				class="checkbox"
-				value="1" :checked="editorMoreFeatures === true">
+				value="1" :checked="editorMoreFeatures === 1">
 			<label for="editor_more_features">
 				{{ t('mail', 'Use more formatting options') }}
 			</label>
@@ -83,9 +83,6 @@ export default {
 				})
         },
         editorMoreFeatures(val, oldVal){
-            if(!val) {
-                val = null
-            }
             this.$store
 				.dispatch('patchAccount', {
 					account: this.account,

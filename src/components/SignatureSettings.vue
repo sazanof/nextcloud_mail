@@ -43,6 +43,8 @@
 		<TextEditor
 			v-model="signature"
 			:html="true"
+			:position="account.editorPosition"
+			:moreFeatures="account.editorMoreFeatures===1"
 			:placeholder="t('mail', 'Signature …')"
 			:bus="bus" />
 		<button
