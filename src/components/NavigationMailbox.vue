@@ -529,6 +529,30 @@ export default {
 				}
 			)
 		},
+		clearMailbox(){
+			const id = this.mailbox.databaseId
+			console.log(this.mailbox);
+			OC.dialogs.confirmDestructive(
+				t('mail', 'All messages in folder will be deleted.'),
+				t('mail', 'Clear mailbox {name}', { name: this.mailbox.displayName }),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('mail', 'Clear mailbox'),
+					confirmClasses: 'error',
+					cancel: t('mail', 'Cancel'),
+				},
+				(result) => {
+					if (result) {
+						return this.$store
+							.dispatch('clearMailbox', { mailbox: this.mailbox })
+							.then(() => {
+								logger.info(`mailbox ${id} cleared`)
+							})
+							.catch((error) => logger.error('could not clear mailbox', { error }))
+					}
+				}
+			)
+		},
 		async renameMailbox() {
 			this.renameInput = false
 			this.showSaving = false
