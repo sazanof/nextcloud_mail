@@ -107,6 +107,14 @@
 				{{ t('mail', 'Sync in background') }}
 			</ActionCheckbox>
 
+			<ActionButton 
+			    v-if="mailbox.specialRole !== 'flagged' && !account.isUnified"
+				icon="icon-brush" 
+				@click="clearMailbox"
+				:close-after-click="true">
+				{{ t('mail', 'Clear mailbox') }}
+			</ActionButton>
+
 			<ActionButton v-if="!account.isUnified && !mailbox.specialRole && !hasSubMailboxes" icon="icon-delete" @click="deleteMailbox">
 				{{ t('mail', 'Delete mailbox') }}
 			</ActionButton>
@@ -447,6 +455,30 @@ export default {
 								logger.info(`mailbox ${id} deleted`)
 							})
 							.catch((error) => logger.error('could not delete mailbox', { error }))
+					}
+				}
+			)
+		},
+		clearMailbox(){
+			const id = this.mailbox.databaseId
+			console.log(this.mailbox);
+			OC.dialogs.confirmDestructive(
+				t('mail', 'All messages in folder will be deleted.'),
+				t('mail', 'Clear mailbox {name}', { name: this.mailbox.displayName }),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('mail', 'Clear mailbox'),
+					confirmClasses: 'error',
+					cancel: t('mail', 'Cancel'),
+				},
+				(result) => {
+					if (result) {
+						return this.$store
+							.dispatch('clearMailbox', { mailbox: this.mailbox })
+							.then(() => {
+								logger.info(`mailbox ${id} cleared`)
+							})
+							.catch((error) => logger.error('could not clear mailbox', { error }))
 					}
 				}
 			)
