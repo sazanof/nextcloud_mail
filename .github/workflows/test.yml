@@ -16,6 +16,10 @@ jobs:
         nextcloud-versions: ['stable21', 'stable22', 'stable23']
         include:
             - php-versions: 7.4
+              nextcloud-versions: stable24
+            - php-versions: 8.0
+              nextcloud-versions: stable24
+            - php-versions: 7.4
               nextcloud-versions: master
             - php-versions: 8.0
               nextcloud-versions: master
@@ -49,7 +53,7 @@ jobs:
       env:
         XDEBUG_MODE: coverage
     - name: Report coverage
-      uses: codecov/codecov-action@v3.0.0
+      uses: codecov/codecov-action@v3.1.0
       if: ${{ always() && matrix.nextcloud-versions == 'master' }}
       with:
         file: ./nextcloud/apps/mail/tests/clover.unit.xml
@@ -61,7 +65,7 @@ jobs:
       strategy:
           matrix:
               php-versions: [7.4, 8.0]
-              nextcloud-versions: ['master']
+              nextcloud-versions: ['stable24']
               db: ['sqlite', 'mysql', 'pgsql']
       name: php${{ matrix.php-versions }}-${{ matrix.db }} integration tests
       services:
@@ -149,7 +153,7 @@ jobs:
             if: ${{ always() }}
             run: cat nextcloud/data/horde_*.log
           - name: Report coverage
-            uses: codecov/codecov-action@v3.0.0
+            uses: codecov/codecov-action@v3.1.0
             if: ${{ always() && matrix.db == 'mysql' }}
             with:
               file: ./nextcloud/apps/mail/tests/clover.integration.xml
