@@ -370,14 +370,16 @@
 						</ActionInput>
 					</template>
 				</Actions>
-				<div>
-					<input
-						class="submit-message send primary icon-confirm-white"
-						type="submit"
-						:value="submitButtonTitle"
-						:disabled="!canSend"
-						@click="onSend">
-				</div>
+
+				<button :disabled="!canSend"
+					class="button primary send-button"
+					type="submit"
+					@click="onSend">
+					<Send
+						:title="submitButtonTitle"
+						:size="20" />
+					{{ submitButtonTitle }}
+				</button>
 			</div>
 		</div>
 	</div>
@@ -457,6 +459,7 @@ import NoDraftsMailboxConfiguredError
 	from '../errors/NoDraftsMailboxConfiguredError'
 import ManyRecipientsError
 	from '../errors/ManyRecipientsError'
+import Send from 'vue-material-design-icons/Send'
 import SendClock from 'vue-material-design-icons/SendClock'
 import moment from '@nextcloud/moment'
 
@@ -493,7 +496,11 @@ export default {
 		Multiselect,
 		TextEditor,
 		EmptyContent,
+<<<<<<< HEAD
 		ListItemIcon,
+=======
+		Send,
+>>>>>>> 623018da8bdab66b4359f5f5c91f5d26ac47b937
 		SendClock,
 	},
 	props: {
@@ -1296,14 +1303,10 @@ export default {
 	min-height: 100px;
 }
 
-.send {
-	padding: 12px 18px 13px 36px;
-	background-position: 12px center;
-	margin-left: 4px;
-}
 ::v-deep .multiselect .multiselect__tags {
 	border: none !important;
 }
+<<<<<<< HEAD
 ::v-deep .multiselect.opened .multiselect__tags .multiselect__tags-wrap {
 	flex-wrap: wrap;
 }
@@ -1316,6 +1319,9 @@ export default {
 .submit-message.send.primary.icon-confirm-white {
 	color: var(--color-main-background);
 }
+=======
+
+>>>>>>> 623018da8bdab66b4359f5f5c91f5d26ac47b937
 .sending-hint {
 	height: 50px;
 	margin-top: 50px;
@@ -1330,5 +1336,14 @@ export default {
 }
 .send-action-radio {
 	padding: 5px 0 5px 0;
+}
+.send-button {
+	display: flex;
+	align-items: center;
+	padding: 10px 15px;
+	margin-left: 5px;
+}
+.send-button .send-icon {
+	padding-right: 5px;
 }
 </style>
