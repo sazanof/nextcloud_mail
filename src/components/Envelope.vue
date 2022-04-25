@@ -336,7 +336,7 @@ export default {
 			}
 		},
 		formatted() {
-			return moment.unix(this.data.dateInt).fromNow()
+			return moment.unix(this.data.dateInt).format('DD.MM.YY HH:mm')
 		},
 		unselect() {
 			if (this.selected) {
