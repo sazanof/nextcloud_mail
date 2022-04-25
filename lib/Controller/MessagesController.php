@@ -241,6 +241,8 @@ class MessagesController extends Controller {
 			return new JSONResponse([], Http::STATUS_FORBIDDEN);
 		}
 
+		
+
 		$json = $this->mailManager->getImapMessage(
 			$account,
 			$mailbox,
