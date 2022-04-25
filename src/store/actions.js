@@ -292,7 +292,7 @@ export default {
 						subject: buildReplySubject(reply.data.subject),
 						body: data.body,
 						originalBody: data.body,
-						replyTo: reply.data,
+						replyTo: reply.data
 					},
 				})
 				return
@@ -317,6 +317,7 @@ export default {
 				return
 			} else if (reply.mode === 'forward') {
 				logger.debug('Show forward composer', { reply })
+				console.log(original)
 				commit('showMessageComposer', {
 					data: {
 						accountId: reply.data.accountId,
@@ -326,6 +327,7 @@ export default {
 						body: data.body,
 						originalBody: data.body,
 						forwardFrom: reply.data,
+						attachments: original.attachments
 					},
 				})
 				return
