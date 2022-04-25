@@ -496,11 +496,8 @@ export default {
 		Multiselect,
 		TextEditor,
 		EmptyContent,
-<<<<<<< HEAD
 		ListItemIcon,
-=======
 		Send,
->>>>>>> 623018da8bdab66b4359f5f5c91f5d26ac47b937
 		SendClock,
 	},
 	props: {
@@ -1327,7 +1324,6 @@ export default {
 ::v-deep .multiselect .multiselect__tags {
 	border: none !important;
 }
-<<<<<<< HEAD
 ::v-deep .multiselect.opened .multiselect__tags .multiselect__tags-wrap {
 	flex-wrap: wrap;
 }
@@ -1340,9 +1336,6 @@ export default {
 .submit-message.send.primary.icon-confirm-white {
 	color: var(--color-main-background);
 }
-=======
-
->>>>>>> 623018da8bdab66b4359f5f5c91f5d26ac47b937
 .sending-hint {
 	height: 50px;
 	margin-top: 50px;
