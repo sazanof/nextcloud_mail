@@ -257,7 +257,8 @@ class AttachmentService implements IAttachmentService {
 			}
 			if ($attachment['type'] === 'message-attachment') {
 				// Adds an attachment from another email (use case is, eg., a mail forward)
-				$attachmentIds[] = $this->handleForwardedAttachment($account, $attachment, $client);
+				$originalMailboxId = $attachment['mailboxId'];
+				$attachmentIds[] = $this->handleForwardedAttachment($account, $attachment, $client, $originalMailboxId);
 				continue;
 			}
 
@@ -308,12 +309,19 @@ class AttachmentService implements IAttachmentService {
 	 * @param Account $account
 	 * @param mixed[] $attachment
 	 * @param \Horde_Imap_Client_Socket $client
+	 * @param int $originalMailboxId
 	 * @return int
 	 * @throws DoesNotExistException
 	 */
-	private function handleForwardedAttachment(Account $account, array $attachment, \Horde_Imap_Client_Socket $client): ?int {
-		$mailbox = $this->mailManager->getMailbox($account->getUserId(), $attachment['mailboxId']);
-
+	private function handleForwardedAttachment(Account $account, array $attachment, \Horde_Imap_Client_Socket $client, $originalMailboxId): ?int {
+		$attachmentMessage = $this->mailManager->getMessage($account->getUserId(), (int)$attachment['messageId']);
+		if(is_null($originalMailboxId)){
+			$mailboxId = $attachmentMessage->getMailboxId();
+		}
+		else {
+			$mailboxId = $originalMailboxId;
+		}
+		$mailbox = $this->mailManager->getMailbox($account->getUserId(), $mailboxId);
 		$attachments = $this->messageMapper->getRawAttachments(
 			$client,
 			$mailbox->getName(),
@@ -322,6 +330,7 @@ class AttachmentService implements IAttachmentService {
 				$attachment['id'] ?? []
 			]
 		);
+
 
 		if (empty($attachments)) {
 			return null;
