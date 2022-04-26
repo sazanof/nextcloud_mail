@@ -143,7 +143,7 @@ class OutboxService implements ILocalMailboxService {
 		} finally {
 			$client->logout();
 		}
-
+		
 		$message->setAttachments($this->attachmentService->saveLocalMessageAttachments($message->getId(), $attachmentIds));
 		return $message;
 	}
