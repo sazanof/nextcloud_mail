@@ -323,7 +323,6 @@ export default {
 				return
 			} else if (reply.mode === 'forward') {
 				logger.debug('Show forward composer', { reply })
-				console.log(original)
 				commit('showMessageComposer', {
 					data: {
 						accountId: reply.data.accountId,

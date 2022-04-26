@@ -117,6 +117,7 @@ class OutboxController extends Controller {
 		if ($draftId !== null) {
 			$this->service->handleDraft($account, $draftId);
 		}
+		
 		foreach($attachments as $index => $attachment){
 			if(!isset($attachment['type'])){
 				if(isset($attachment['messageId'])){
