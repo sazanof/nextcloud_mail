@@ -21,37 +21,39 @@
 
 <template>
 	<div class="mail-message-attachments">
-		<div class="attachments">
-			<MessageAttachment
-				v-for="attachment in attachments"
-				:id="attachment.id"
-				:key="attachment.id"
-				:file-name="attachment.fileName"
-				:size="attachment.size"
-				:url="attachment.downloadUrl"
-				:is-image="attachment.isImage"
-				:is-calendar-event="attachment.isCalendarEvent"
-				:mime="attachment.mime"
-				:mime-url="attachment.mimeUrl"
-				@click="showViewer(attachment)" />
-			<AttachmentImageViewer v-if="attachmentImageURL && showPreview"
-				:url="attachmentImageURL"
-				@close="showPreview = false" />
+		<div class="mail-message-attachments--wrapper">
+			<div class="attachments">
+				<MessageAttachment
+					v-for="attachment in attachments"
+					:id="attachment.id"
+					:key="attachment.id"
+					:file-name="attachment.fileName"
+					:size="attachment.size"
+					:url="attachment.downloadUrl"
+					:is-image="attachment.isImage"
+					:is-calendar-event="attachment.isCalendarEvent"
+					:mime="attachment.mime"
+					:mime-url="attachment.mimeUrl"
+					@click="showViewer(attachment)" />
+				<AttachmentImageViewer v-if="attachmentImageURL && showPreview"
+					:url="attachmentImageURL"
+					@close="showPreview = false" />
+			</div>
 		</div>
 		<p v-if="moreThanOne" class="attachments-button-wrapper">
-			<button
-				class="attachments-save-to-cloud"
-				:class="{'icon-folder': !savingToCloud, 'icon-loading-small': savingToCloud}"
-				:disabled="savingToCloud"
-				@click="saveAll">
-				{{ t('mail', 'Save all to Files') }}
-			</button>
-			<button
-				class="attachments-save-to-cloud icon-folder"
-				@click="downloadZip">
-				{{ t('mail', 'Download Zip') }}
-			</button>
-		</p>
+				<button
+					class="attachments-save-to-cloud"
+					:class="{'icon-folder': !savingToCloud, 'icon-loading-small': savingToCloud}"
+					:disabled="savingToCloud"
+					@click="saveAll">
+					{{ t('mail', 'Save all to Files') }}
+				</button>
+				<button
+					class="attachments-save-to-cloud icon-folder"
+					@click="downloadZip">
+					{{ t('mail', 'Download Zip') }}
+				</button>
+			</p>
 	</div>
 </template>
 
@@ -138,9 +140,14 @@ export default {
 
 <style lang="scss">
 .attachments {
-	width: 230px;
-  position: relative;
-  display: flex;
+	width: calc(100% - 66px);
+	box-sizing: border-box;
+	padding: 0 10px;
+    position: relative;
+    display: flex;
+	flex-wrap: wrap;
+	margin: 0 33px 10px 33px;
+	overflow: auto;
 }
 
 /* show icon + text for Download all button
@@ -157,8 +164,7 @@ export default {
 .oc-dialog {
 	z-index: 10000000;
 }
-.mail-message-attachments {
-	overflow-x: auto;
-	overflow-y: auto;
+.mail-message-attachments--wrapper {
+	display:flex
 }
 </style>

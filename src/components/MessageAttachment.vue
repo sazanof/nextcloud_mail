@@ -20,44 +20,46 @@
   -->
 
 <template>
-	<div class="attachment">
-		<img v-if="isImage"
-			class="mail-attached-image"
-			:src="url"
-			@click="$emit('click', $event)">
-		<img class="attachment-icon" :src="mimeUrl">
-		<span class="attachment-name"
+	<div class="attachment"
+		@click.prevent="$emit('click', $event)">
+		<div class="mail-attachment-img--wrapper">
+			<img v-if="isImage" class="mail-attached-image" :src="url">
+			<img v-else class="attachment-icon" :src="mimeUrl">
+		</div>
+		<div class="mail-attached--content">
+			<span class="attachment-name"
 			:title="label">{{ name }}
+			</span>
 			<span class="attachment-size">({{ humanReadable(size) }})</span>
-		</span>
-		<Actions :boundaries-element="boundariesElement">
-			<ActionButton
-				v-if="isCalendarEvent"
-				class="attachment-import calendar"
-				:icon="{'icon-add': !loadingCalendars, 'icon-loading-small': loadingCalendars}"
-				:disabled="loadingCalendars"
-				@click.stop="loadCalendars">
-				{{ t('mail', 'Import into calendar') }}
-			</ActionButton>
-			<ActionButton icon="icon-download"
-				class="attachment-download"
-				@click="download">
-				{{ t('mail', 'Download attachment') }}
-			</ActionButton>
-			<ActionButton
-				class="attachment-save-to-cloud"
-				:icon="{'icon-folder': !savingToCloud, 'icon-loading-small': savingToCloud}"
-				:disabled="savingToCloud"
-				@click.stop="saveToCloud">
-				{{ t('mail', 'Save to Files') }}
-			</ActionButton>
-			<div
-				v-on-click-outside="closeCalendarPopover"
-				class="popovermenu bubble attachment-import-popover hidden"
-				:class="{open: showCalendarPopover}">
-				<PopoverMenu :menu="calendarMenuEntries" />
-			</div>
-		</Actions>
+			<Actions :boundaries-element="boundariesElement">
+				<ActionButton
+					v-if="isCalendarEvent"
+					class="attachment-import calendar"
+					:icon="{'icon-add': !loadingCalendars, 'icon-loading-small': loadingCalendars}"
+					:disabled="loadingCalendars"
+					@click.stop="loadCalendars">
+					{{ t('mail', 'Import into calendar') }}
+				</ActionButton>
+				<ActionButton icon="icon-download"
+					class="attachment-download"
+					@click="download">
+					{{ t('mail', 'Download attachment') }}
+				</ActionButton>
+				<ActionButton
+					class="attachment-save-to-cloud"
+					:icon="{'icon-folder': !savingToCloud, 'icon-loading-small': savingToCloud}"
+					:disabled="savingToCloud"
+					@click.stop="saveToCloud">
+					{{ t('mail', 'Save to Files') }}
+				</ActionButton>
+				<div
+					v-on-click-outside="closeCalendarPopover"
+					class="popovermenu bubble attachment-import-popover hidden"
+					:class="{open: showCalendarPopover}">
+					<PopoverMenu :menu="calendarMenuEntries" />
+				</div>
+			</Actions>
+		</div>
 	</div>
 </template>
 
@@ -209,17 +211,55 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .attachment {
+	height: auto;
+	display:inline-flex;
+	justify-content: space-between;
+	width: calc(33.3334% - 20px);
+	margin: 10px;
 	position: relative;
-	display: inline-block;
-	width: calc(100% - 32px);
-	padding: 16px;
 }
 
 .attachment:hover,
 .attachment span:hover {
 	background-color: var(--color-background-hover);
 	cursor: pointer;
+
+	.action-item {
+		transition: 0.4s;
+		opacity: 1;
+	}
+	img {
+		transition: 0.3s;
+		opacity: 0.2;
+	}
+}
+
+.mail-attachment-img--wrapper {
+	height: 44px;
+	width: 44px;
+	overflow: hidden;
+	display:flex;
+	justify-content: center;
+	position: relative;
+
+	img {
+		transition: 0.3s;
+		opacity: 1;
+		width: 44px;
+		height: 44px;
+	}
+	
+	.mail-attached-image {
+		width: 100px;
+	}
+}
+
+.mail-attached--content {
+	width: calc(100% - 49px);
+	display: flex;
+    flex-direction: column;
 }
 
 .mail-attached-image {
@@ -237,18 +277,19 @@ export default {
 }
 .attachment-name {
 	display: inline-block;
-	width: calc(100% - 72px);
+	width: 100%;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	vertical-align: middle;
-	margin-bottom: 20px;
 }
 
 /* show attachment size less prominent */
 .attachment-size {
 	-ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=50)';
 	opacity: 0.5;
+	font-size: 12px;
+	line-height: 14px;
 }
 
 .attachment-icon {
@@ -257,8 +298,12 @@ export default {
 	margin-bottom: 20px;
 }
 .action-item {
+	left:0;
+	top:0;
+	opacity: 0;
 	display: inline-block !important;
-	position: relative !important;
+	position: absolute !important;
+	transition: 0.4s;
 }
 .mail-message-attachments {
 	overflow-x: auto;
