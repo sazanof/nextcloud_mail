@@ -252,11 +252,13 @@ class MessagesController extends Controller {
 		if ($itineraries) {
 			$json['itineraries'] = $itineraries;
 		}
-		$json['attachments'] = array_map(function ($a) use ($id) {
-			return $this->enrichDownloadUrl(
+		$json['attachments'] = array_map(function ($a) use ($id, $mailbox) {
+			return array_merge($this->enrichDownloadUrl(
 				$id,
 				$a
-			);
+			),[
+				'mailboxId'=>$mailbox->getId()
+			]);
 		}, $json['attachments']);
 		$json['accountId'] = $account->getId();
 		$json['mailboxId'] = $mailbox->getId();

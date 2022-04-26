@@ -17,6 +17,7 @@
 			:draft="saveDraft"
 			:send="sendMessage"
 			:forwarded-messages="forwardedMessages"
+			:forward-from="composerData.forwardFrom"
 			@close="$emit('close')" />
 	</Modal>
 </template>
@@ -100,12 +101,12 @@ export default {
 		async sendMessage(data) {
 			logger.debug('sending message', { data })
 			const now = new Date().getTime()
-			for (const attachment of data.attachments) {
-				if (!attachment.type) {
+			//for (const attachment of data.attachments) {
+				//if (!attachment.type) {
 					// todo move to backend: https://github.com/nextcloud/mail/issues/6227
-					attachment.type = 'local'
-				}
-			}
+				//	attachment.type = 'local'
+				//}
+			//}
 			const dataForServer = {
 				accountId: data.account,
 				subject: data.subject,

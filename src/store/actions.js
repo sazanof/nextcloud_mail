@@ -298,7 +298,7 @@ export default {
 						subject: buildReplySubject(reply.data.subject),
 						body: data.body,
 						originalBody: data.body,
-						replyTo: reply.data,
+						replyTo: reply.data
 					},
 				})
 				return
@@ -332,6 +332,7 @@ export default {
 						body: data.body,
 						originalBody: data.body,
 						forwardFrom: reply.data,
+						attachments: original.attachments
 					},
 				})
 				return
