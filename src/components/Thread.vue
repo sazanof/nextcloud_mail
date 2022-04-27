@@ -300,7 +300,7 @@ export default {
 #mail-thread-header-fields {
 	// initial width
 	width: 0;
-	padding-left: 60px;
+	padding-left: 16px;
 	// grow and try to fill 100%
 	flex: 1 1 auto;
 	h2,
