@@ -28,7 +28,7 @@
 				:email="envelope.from[0].email"
 				:display-name="envelope.from[0].label"
 				:disable-tooltip="true"
-				:size="40" />
+				:size="44" />
 			<div
 				v-if="isImportant"
 				class="app-content-list-item-star icon-important"
@@ -49,7 +49,7 @@
 				:to="route"
 				event=""
 				class="left"
-				:class="{seen: envelope.flags.seen}"
+				:class="{seen: envelope.flags.seen, 'original-subject': !hasChangedSubject}"
 				@click.native.prevent="$emit('toggleExpand', $event)">
 				<div class="sender"
 					:class="{ 'centered-sender': centeredSender }">
@@ -310,6 +310,7 @@ export default {
 <style lang="scss" scoped>
 	.sender {
 		margin-left: 8px;
+		font-weight: bold;
 	}
 	.centered-sender {
 		margin-top: 8px;
@@ -390,6 +391,9 @@ export default {
 	.left {
 		flex-grow: 1;
 	}
+	.left.original-subject {
+		align-self: center;
+	}
 	.icon-important {
 		::v-deep path {
 			fill: #ffcc00;
@@ -456,7 +460,7 @@ export default {
 		left: 4px;
 	}
 	.envelope--header.list-item-style {
-		border-radius: 16px;
+		border-radius: 16px 16px 0 0;
 	}
 
 </style>
