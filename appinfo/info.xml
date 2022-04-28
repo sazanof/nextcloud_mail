@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-	<id>mail</id>
-	<name>Mail</name>
+	<id>mgt-mail</id>
+	<name>MGT Mail</name>
 	<summary>💌 A mail app for Nextcloud</summary>
 	<description><![CDATA[**💌 A mail app for Nextcloud**
 
@@ -16,6 +16,7 @@
 	<licence>agpl</licence>
 	<author>Greta Doçi</author>
 	<author homepage="https://github.com/nextcloud/groupware">Nextcloud Groupware Team</author>
+	<author homepage="https://sazanof.ru">Mikhail Sazanov</author>
 	<namespace>Mail</namespace>
 	<documentation>
 		<user>https://github.com/nextcloud/mail/blob/main/doc/user.md</user>
@@ -26,7 +27,7 @@
 	<category>office</category>
 	<website>https://github.com/nextcloud/mail#readme</website>
 	<bugs>https://github.com/nextcloud/mail/issues</bugs>
-	<repository type="git">https://github.com/nextcloud/mail.git</repository>
+	<repository type="git">https://github.com/sazanof/nextcloud_mail.git</repository>
 	<screenshot>https://user-images.githubusercontent.com/1374172/79554966-278e1600-809f-11ea-82ea-7a0d72a2704f.png</screenshot>
 	<dependencies>
 		<php min-version="7.3" max-version="8.0" />
