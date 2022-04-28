@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Tue Sep 01 2015 13:54:51 GMT+0200 (CEST)
 
-var webpackConfig = require('./js/webpack.dev.config.js');
+var webpackConfig = require('./js/webpack.dev.config.js.js');
 
 webpackConfig.entry = './js/tests/test_init.js';
 webpackConfig.module.rules.push({
