@@ -229,8 +229,23 @@ export default {
 </script>
 
 <style scoped>
+.new-message-attachments {
+	align-self: flex-start;
+	display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.new-message-attachments ul {
+	display: flex;
+	overflow: auto;
+    width: 100%;
+}
+
 .new-message-attachments li {
 	padding: 10px;
+	display: flex;
+    align-items: center;
 }
 
 .new-message-attachments-action {
@@ -243,6 +258,10 @@ export default {
 /* attachment filenames */
 .new-message-attachment-name {
 	display: inline-block;
+	text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 230px;
+    overflow: hidden;
 }
 
 /* Colour the filename with a different color during attachment upload */
