@@ -1174,7 +1174,7 @@ export default {
 
 .composer-actions {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: flex-end;
 	justify-content: space-between;
 	position: sticky;
