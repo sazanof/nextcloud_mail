@@ -419,8 +419,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 .new-message-attachments {
 	ul.new-message-attachments--list {
 		display: flex;

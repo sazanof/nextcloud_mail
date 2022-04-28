@@ -1230,6 +1230,10 @@ export default {
 }
 
 .composer-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	justify-content: space-between;
 	position: sticky;
 	background: linear-gradient(rgba(255, 255, 255, 0), var(--color-main-background-translucent) 50%);
 }
