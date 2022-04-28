@@ -805,15 +805,9 @@ export default {
 		}
 
 		// Add attachments in case of forward
-		if (this.forwardFrom?.attachments !== undefined) {
-			this.forwardFrom.attachments.forEach(att => {
-				this.attachments.push({
-					fileName: att.fileName,
-					displayName: trimStart('/', att.fileName),
-					id: att.id,
-					messageId: this.forwardFrom.databaseId,
-					type: 'message-attachment',
-				})
+		if (this.forwardFrom !== undefined) {
+			this.attachments.forEach((att,ind) => {
+				this.attachments[ind].originalMessageId = this.forwardFrom.databaseId
 			})
 		}
 		// Add messages forwarded as attachments
