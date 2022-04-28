@@ -529,8 +529,9 @@ class MessageMapper {
 				'usestream' => true,
 			]);
 			$decoded = $part->getContents();
-
-			$attachments[] = $decoded;
+			if (!empty($decoded)) { 
+				$attachments[] = $decoded; 
+			}
 		}
 		return $attachments;
 	}
