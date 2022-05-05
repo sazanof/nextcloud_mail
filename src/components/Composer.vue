@@ -45,7 +45,7 @@
 					:hide-selected="true"
 					:loading="loadingIndicatorTo"
 					v-bind:auto-limit="autoLimit"
-					@keyup="onInputChanged"
+					@input="callSaveDraft(true, getMessageData)"
 					@tag="onNewToAddr"
 					@search-change="onAutocomplete($event, 'to')">
 					<template #tag="{ option }">
@@ -99,7 +99,7 @@
 					:loading="loadingIndicatorCc"
 					v-bind:auto-limit="autoLimit"
 					:hide-selected="true"
-					@keyup="onInputChanged"
+					@input="callSaveDraft(true, getMessageData)"
 					@tag="onNewCcAddr"
 					@search-change="onAutocomplete($event, 'cc')">
 					<template #tag="{ option }">
@@ -147,7 +147,7 @@
 					:preserve-search="true"
 					:loading="loadingIndicatorBcc"
 					:hide-selected="true"
-					@keyup="onInputChanged"
+					@input="callSaveDraft(true, getMessageData)"
 					@tag="onNewBccAddr"
 					@search-change="onAutocomplete($event, 'bcc')">
 					<template #tag="{ option }">
@@ -188,7 +188,7 @@
 				class="subject"
 				autocomplete="off"
 				:placeholder="t('mail', 'Subject …')"
-				@keyup="onInputChanged">
+				@input="callSaveDraft(true, getMessageData)">
 		</div>
 		<div v-if="noReply" class="warning noreply-warning">
 			{{ t('mail', 'This message came from a noreply address so your reply will probably not be read.') }}
@@ -211,7 +211,7 @@
 				:placeholder="t('mail', 'Write message …')"
 				:focus="isReply"
 				:bus="bus"
-				@input="onInputChanged" />
+				@input="callSaveDraft(true, getMessageData)" />
 			<TextEditor
 				v-else-if="!encrypt && !editorPlainText"
 				key="editor-rich"
@@ -224,7 +224,7 @@
 				:placeholder="t('mail', 'Write message …')"
 				:focus="isReply"
 				:bus="bus"
-				@input="onInputChanged" />
+				@input="onEditorRichInputText" />
 			<MailvelopeEditor
 				v-else
 				ref="mailvelopeEditor"
@@ -233,23 +233,35 @@
 				:quoted-text="body"
 				:is-reply-or-forward="isReply || isForward" />
 		</div>
-		<div class="composer-actions">
-			<ComposerAttachments v-model="attachments"
-				:bus="bus"
-				:upload-size-limit="attachmentSizeLimit"
-				@upload="onAttachmentsUploading" />
-			<div class="composer-actions-right">
-				<button v-if="savingDraft === false"
-					class="button"
-					:title="t('mail', 'Discard & close draft')"
-					@click="discardDraft">
-					{{ t('mail', 'Discard draft') }}
-				</button>
-				<p class="composer-actions-draft">
-					<span v-if="!canSaveDraft" id="draft-status">{{ t('mail', 'Cannot save draft because this account does not have a drafts mailbox configured.') }}</span>
-					<span v-else-if="savingDraft === true" id="draft-status">{{ t('mail', 'Saving draft …') }}</span>
-					<span v-else-if="savingDraft === false" id="draft-status">{{ t('mail', 'Draft saved') }}</span>
+		<ComposerAttachments v-model="attachments"
+			:bus="bus"
+			:upload-size-limit="attachmentSizeLimit"
+			@upload="onAttachmentsUploading" />
+		<div class="composer-actions-right composer-actions">
+			<div class="composer-actions--primary-actions">
+				<p class="composer-actions-draft-status">
+					<span v-if="savingDraft === true" class="draft-status">{{ t('mail', 'Saving draft …') }}</span>
+					<span v-else-if="!canSaveDraft" class="draft-status">{{ t('mail', 'Error saving draft') }}</span>
+					<span v-else-if="savingDraft === false" class="draft-status">{{ t('mail', 'Draft saved') }}</span>
 				</p>
+				<VButton v-if="!savingDraft && !canSaveDraft"
+					class="button"
+					type="tertiary"
+					@click="onSave">
+					<template #icon>
+						<Download :size="20" :title="t('mail', 'Save draft')" />
+					</template>
+				</VButton>
+				<VButton v-if="savingDraft === false"
+					class="button"
+					type="tertiary"
+					@click="discardDraft">
+					<template #icon>
+						<Delete :size="20" :title="t('mail', 'Discard & close draft')" />
+					</template>
+				</VButton>
+			</div>
+			<div class="composer-actions--secondary-actions">
 				<Actions>
 					<template v-if="!isMoreActionsOpen">
 						<ActionButton icon="icon-upload" @click="onAddLocalAttachment">
@@ -267,7 +279,10 @@
 								addShareLink
 							}}
 						</ActionButton>
-						<ActionButton :close-after-click="false" @click="isMoreActionsOpen=true">
+						<ActionButton
+							v-if="!isScheduledSendingDisabled"
+							:close-after-click="false"
+							@click="isMoreActionsOpen=true">
 							<template #icon>
 								<SendClock :size="20" :title="t('mail', 'Send later')" />
 							</template>
@@ -388,11 +403,7 @@
 		:hint="t('mail', 'Sending …')"
 		role="alert"
 		class="sending-hint" />
-	<Loading v-else-if="state === STATES.DISCARDING" :hint="t('mail', 'Discarding …')" class="emptycontent" />
-	<EmptyContent v-else-if="state === STATES.DISCARDED" icon="icon-mail">
-		<h2>{{ t('mail', 'Draft was discarded!') }}</h2>
-	</EmptyContent>
-	<div v-else-if="state === STATES.ERROR" class="emptycontent" role="alert">
+	<EmptyContent v-else-if="state === STATES.ERROR" class="centered-content" role="alert">
 		<h2>{{ t('mail', 'Error sending your message') }}</h2>
 		<p v-if="errorText">
 			{{ errorText }}
@@ -403,7 +414,7 @@
 		<button class="button primary" @click="onSend">
 			{{ t('mail', 'Retry') }}
 		</button>
-	</div>
+	</EmptyContent>
 	<div v-else-if="state === STATES.WARNING" class="emptycontent" role="alert">
 		<h2>{{ t('mail', 'Warning sending your message') }}</h2>
 		<p v-if="errorText">
@@ -434,6 +445,11 @@ import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import ActionRadio from '@nextcloud/vue/dist/Components/ActionRadio'
+import Button from '@nextcloud/vue/dist/Components/Button'
+import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
+import Delete from 'vue-material-design-icons/Delete'
+import ComposerAttachments from './ComposerAttachments'
+import Download from 'vue-material-design-icons/Download'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import ListItemIcon from '@nextcloud/vue/dist/Components/ListItemIcon'
@@ -441,8 +457,6 @@ import { showError } from '@nextcloud/dialogs'
 import { translate as t, getCanonicalLocale, getFirstDay, getLocale } from '@nextcloud/l10n'
 import Vue from 'vue'
 
-import ComposerAttachments from './ComposerAttachments'
-import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
 import { findRecipient } from '../service/AutocompleteService'
 import { detect, html, plain, toHtml, toPlain } from '../util/text'
 import Loading from './Loading'
@@ -459,9 +473,11 @@ import NoDraftsMailboxConfiguredError
 	from '../errors/NoDraftsMailboxConfiguredError'
 import ManyRecipientsError
 	from '../errors/ManyRecipientsError'
+
 import Send from 'vue-material-design-icons/Send'
 import SendClock from 'vue-material-design-icons/SendClock'
 import moment from '@nextcloud/moment'
+import { mapGetters } from 'vuex'
 
 const debouncedSearch = debouncePromise(findRecipient, 500)
 
@@ -490,8 +506,11 @@ export default {
 		ActionInput,
 		ActionLink,
 		ActionRadio,
+		VButton: Button,
 		ComposerAttachments,
 		ChevronLeft,
+		Delete,
+		Download,
 		Loading,
 		Multiselect,
 		TextEditor,
@@ -621,10 +640,14 @@ export default {
 					return value ? moment(value, 'LLL').toDate() : null
 				},
 			},
-			autoLimit: true
+			autoLimit: true,
+			editorRichInputTextReady: false,
 		}
 	},
 	computed: {
+		...mapGetters([
+			'isScheduledSendingDisabled',
+		]),
 		aliases() {
 			let cnt = 0
 			const accounts = this.$store.getters.accounts.filter((a) => !a.isUnified)
@@ -907,8 +930,7 @@ export default {
 					return uid
 				})
 				.catch(async(error) => {
-					console.error('could not save draft', error)
-					const canSave = await matchError(error, {
+					await matchError(error, {
 						[NoDraftsMailboxConfiguredError.getName()]() {
 							return false
 						},
@@ -916,9 +938,7 @@ export default {
 							return true
 						},
 					})
-					if (!canSave) {
-						this.canSaveDraft = false
-					}
+					this.canSaveDraft = false
 				})
 				.then((uid) => {
 					this.savingDraft = false
@@ -926,13 +946,32 @@ export default {
 				})
 			return this.draftsPromise
 		},
+		callSaveDraft(withDebounce, ...args) {
+			if (withDebounce) {
+				return this.saveDraftDebounced(...args)
+			} else {
+				return this.saveDraft(...args)
+			}
+		},
+		onSave() {
+			this.callSaveDraft(false, this.getMessageData)
+		},
 		onInputChanged() {
-			this.saveDraftDebounced(this.getMessageData)
+			this.callSaveDraft(true, this.getMessageData)
 			if (this.appendSignature) {
 				const signatureValue = toHtml(detect(this.selectedAlias.signature)).value
 				this.bus.$emit('insertSignature', signatureValue, this.selectedAlias.signatureAboveQuote)
 				this.appendSignature = false
 			}
+		},
+		// needs to bypass an input event of the first initialisation, because of:
+		// an empty body (e.g "") does not trigger an onInput event.
+		// but to append the signature a onInput event is required.
+		onEditorRichInputText() {
+			if (this.editorRichInputTextReady) {
+				this.callSaveDraft(true, this.getMessageData)
+			}
+			this.editorRichInputTextReady = true
 		},
 		onChangeSendLater(value) {
 			this.sendAtVal = value ? Number.parseInt(value, 10) : undefined
@@ -954,9 +993,11 @@ export default {
 		},
 		onAddLocalAttachment() {
 			this.bus.$emit('onAddLocalAttachment')
+			this.callSaveDraft(true, this.getMessageData)
 		},
 		onAddCloudAttachment() {
 			this.bus.$emit('onAddCloudAttachment')
+			this.callSaveDraft(true, this.getMessageData)
 		},
 		onAddCloudAttachmentLink() {
 			this.bus.$emit('onAddCloudAttachmentLink')
@@ -982,6 +1023,7 @@ export default {
 		onAttachmentsUploading(uploaded) {
 			this.attachmentsPromise = this.attachmentsPromise
 				.then(() => uploaded)
+				.then(() => this.callSaveDraft(true, this.getMessageData))
 				.catch((error) => logger.error('could not upload attachments', { error }))
 				.then(() => logger.debug('attachments uploaded'))
 		},
@@ -1012,6 +1054,7 @@ export default {
 			}
 			this.newRecipients.push(res)
 			list.push(res)
+			this.callSaveDraft(true, this.getMessageData)
 		},
 		async onSend(_, force = false) {
 			if (this.encrypt) {
@@ -1099,11 +1142,8 @@ export default {
 			return `${alias.name} <${alias.emailAddress}>`
 		},
 		async discardDraft() {
-			this.state = STATES.DISCARDING
 			const id = await this.draftsPromise
-			await this.$store.dispatch('deleteMessage', { id })
-			this.state = STATES.DISCARDED
-			this.$emit('close')
+			this.$emit('discard-draft', id)
 		},
 		/**
 		 * Whether the date is acceptable
@@ -1172,14 +1212,7 @@ export default {
 	align-items: flex-end;
 	justify-content: space-between;
 	position: sticky;
-	bottom: 0;
-	padding: 12px;
 	background: linear-gradient(rgba(255, 255, 255, 0), var(--color-main-background-translucent) 50%);
-}
-
-.composer-actions-right {
-	display: flex;
-	align-items: center;
 }
 
 .composer-fields {
@@ -1272,10 +1305,12 @@ export default {
 	padding-left: 20px;
 }
 
-#draft-status {
-	padding: 5px;
+.draft-status {
+	padding: 2px;
 	opacity: 0.5;
 	font-size: small;
+	display: block;
+
 }
 
 .from-label,
@@ -1338,10 +1373,6 @@ export default {
 	background-color: transparent;
 	border: none;
 }
-.emptycontent {
-	margin-top: 250px;
-	height: 120px;
-}
 .send-action-radio {
 	padding: 5px 0 5px 0;
 }
@@ -1354,4 +1385,50 @@ export default {
 .send-button .send-icon {
 	padding-right: 5px;
 }
+.centered-content {
+	margin-top: 0 !important;
+}
+.composer-actions-right {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	justify-content: space-between;
+	bottom: 5px;
+}
+.composer-actions--primary-actions {
+	display: flex;
+	flex-direction: row;
+	padding-left: 10px;
+	align-items: center;
+}
+.composer-actions--secondary-actions {
+	display: flex;
+	flex-direction: row;
+	padding: 5px;
+}
+.composer-actions--primary-actions .button {
+	padding: 2px;
+}
+.composer-actions--secondary-actions .button{
+	flex-shrink: 0;
+}
+
+.composer-actions-draft-status {
+	padding-left: 10px;
+}
+
+@media only screen and (max-width: 580px) {
+	.composer-actions-right {
+		align-items: end;
+		flex-direction: column-reverse;
+	}
+	.composer-actions-draft-status {
+		text-align: end;
+		padding-right: 15px;
+	}
+	.composer-actions--primary-actions {
+		padding-right: 5px;
+	}
+}
+
 </style>
