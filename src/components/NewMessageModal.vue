@@ -17,6 +17,7 @@
 			:draft="saveDraft"
 			:send="sendMessage"
 			:forwarded-messages="forwardedMessages"
+			@discard-draft="discardDraft"
 			@close="$emit('close')" />
 	</Modal>
 </template>
@@ -26,10 +27,9 @@ import logger from '../logger'
 import { toPlain } from '../util/text'
 import { saveDraft } from '../service/MessageService'
 import Composer from './Composer'
-import { showError, showUndo } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
-
-const UNDO_DELAY = 7 * 1000
+import { UNDO_DELAY } from '../store/constants'
 
 export default {
 	name: 'NewMessageModal',
@@ -45,7 +45,7 @@ export default {
 	computed: {
 		modalTitle() {
 			if (this.composerMessage.type === 'outbox') {
-				return t('mail', 'Outbox draft')
+				return t('mail', 'Edit message')
 			}
 			if (this.composerData.draftId !== undefined) {
 				return t('mail', 'Draft')
@@ -76,15 +76,13 @@ export default {
 			}
 
 			if (this.composerMessage.type === 'outbox') {
-				logger.info('skipping autosave', { data })
+				const dataForServer = this.getDataForServer(data)
+				await this.$store.dispatch('outbox/updateMessage', {
+					message: dataForServer,
+					id: this.composerData.id,
+				})
 			} else {
-				const dataForServer = {
-					...data,
-					to: data.to.map(this.recipientToRfc822).join(', '),
-					cc: data.cc.map(this.recipientToRfc822).join(', '),
-					bcc: data.bcc.map(this.recipientToRfc822).join(', '),
-					body: data.isHtml ? data.body.value : toPlain(data.body).value,
-				}
+				const dataForServer = this.getDataForServer(data, true)
 				const { id } = await saveDraft(data.account, dataForServer)
 
 				// Remove old draft envelope
@@ -97,6 +95,21 @@ export default {
 				return id
 			}
 		},
+		getDataForServer(data, serializeRecipients = false) {
+			return {
+				accountId: data.account,
+				subject: data.subject,
+				body: data.isHtml ? data.body.value : toPlain(data.body).value,
+				isHtml: data.isHtml,
+				to: serializeRecipients ? data.to.map(this.recipientToRfc822).join(', ') : data.to,
+				cc: serializeRecipients ? data.cc.map(this.recipientToRfc822).join(', ') : data.cc,
+				bcc: serializeRecipients ? data.bcc.map(this.recipientToRfc822).join(', ') : data.bcc,
+				attachments: data.attachments,
+				aliasId: data.aliasId,
+				inReplyToMessageId: null,
+				sendAt: data.sendAt,
+			}
+		},
 		async sendMessage(data) {
 			logger.debug('sending message', { data })
 			const now = new Date().getTime()
@@ -106,63 +119,28 @@ export default {
 					attachment.type = 'local'
 				}
 			}
-			const dataForServer = {
-				accountId: data.account,
-				subject: data.subject,
-				body: data.isHtml ? data.body.value : toPlain(data.body).value,
-				isHtml: data.isHtml,
-				to: data.to,
-				cc: data.cc,
-				bcc: data.bcc,
-				attachments: data.attachments,
-				aliasId: data.aliasId,
-				inReplyToMessageId: null,
+			const dataForServer = this.getDataForServer({
+				...data,
 				sendAt: data.sendAt ? data.sendAt : Math.floor((now + UNDO_DELAY) / 1000),
-			}
+			})
 			if (dataForServer.sendAt < Math.floor((now + UNDO_DELAY) / 1000)) {
 				dataForServer.sendAt = Math.floor((now + UNDO_DELAY) / 1000)
 			}
 
-			let message
 			if (!this.composerData.id) {
-				message = await this.$store.dispatch('outbox/enqueueMessage', {
+				await this.$store.dispatch('outbox/enqueueMessage', {
 					message: dataForServer,
 				})
 			} else {
-				message = await this.$store.dispatch('outbox/updateMessage', {
+				await this.$store.dispatch('outbox/updateMessage', {
 					message: dataForServer,
 					id: this.composerData.id,
 				})
 			}
 
 			if (!data.sendAt || data.sendAt < Math.floor((now + UNDO_DELAY) / 1000)) {
-				showUndo(
-					t('mail', 'Message sent'),
-					async() => {
-						logger.info('Attempting to stop sending message ' + message.id)
-						const stopped = await this.$store.dispatch('outbox/stopMessage', { message })
-						logger.info('Message ' + message.id + ' stopped', { message: stopped })
-						await this.$store.dispatch('showMessageComposer', {
-							type: 'outbox',
-							data: {
-								...message, // For id and other properties
-								...data, // For the correct body values
-							},
-						})
-					}, {
-						timeout: UNDO_DELAY,
-						close: true,
-					}
-				)
-
-				setTimeout(() => {
-					try {
-						this.$store.dispatch('outbox/sendMessage', { id: message.id })
-					} catch (error) {
-						showError(t('mail', 'Could not send message'))
-						logger.error('Could not delay-send message ' + message.id, { message })
-					}
-				}, UNDO_DELAY)
+				// Awaiting here would keep the modal open for a long time and thus block the user
+				this.$store.dispatch('outbox/sendMessageWithUndo', { id: this.composerData.id })
 			}
 			if (data.draftId) {
 				// Remove old draft envelope
@@ -186,6 +164,24 @@ export default {
 				return `"${recipient.label}" <${recipient.email}>`
 			}
 		},
+		async discardDraft(id) {
+			const isOutbox = this.composerMessage.type === 'outbox'
+			if (isOutbox) {
+				id = this.composerMessage.data.id
+			}
+			this.$emit('close')
+			try {
+				if (isOutbox) {
+					await this.$store.dispatch('outbox/deleteMessage', { id })
+				} else {
+					await this.$store.dispatch('deleteMessage', { id })
+				}
+				showSuccess(t('mail', 'Message discarded'))
+			} catch (error) {
+				console.error(error)
+				showError(t('mail', 'Could not discard message'))
+			}
+		},
 	},
 }
 
@@ -196,10 +192,6 @@ export default {
 	::v-deep .modal-container {
 		max-width: 80%;
 	}
-}
-::v-deep .modal-container {
-	width: 80%;
-	min-height: 60%;
 }
 ::v-deep .modal-wrapper .modal-container {
 	overflow-y: auto !important;

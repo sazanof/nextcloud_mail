@@ -40,8 +40,13 @@
 			<ActionButton
 				icon="icon-checkmark"
 				:close-after-click="true"
-				@click="sendMessage">
+				@click="sendMessageNow">
 				{{ t('mail', 'Send now') }}
+				<template #icon>
+					<Send
+						:title="t('mail', 'Send now')"
+						:size="20" />
+				</template>
 			</ActionButton>
 			<ActionButton
 				icon="icon-delete"
@@ -65,6 +70,8 @@ import logger from '../logger'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { matchError } from '../errors/match'
 import { html, plain } from '../util/text'
+import Send from 'vue-material-design-icons/Send'
+import { UNDO_DELAY } from '../store/constants'
 
 export default {
 	name: 'OutboxMessageListItem',
@@ -72,6 +79,7 @@ export default {
 		ListItem,
 		Avatar,
 		ActionButton,
+		Send,
 	},
 	mixins: [
 		OutboxAvatarMixin,
@@ -111,6 +119,7 @@ export default {
 				await this.$store.dispatch('outbox/deleteMessage', {
 					id: this.message.id,
 				})
+				showSuccess(t('mail', 'Message deleted'))
 			} catch (error) {
 				showError(await matchError(error, {
 					default(error) {
@@ -120,14 +129,13 @@ export default {
 				}))
 			}
 		},
-		async sendMessage(data) {
-			logger.debug('sending message', { data })
-			try {
-				await this.$store.dispatch('outbox/sendMessage', { id: this.message.id, force: true })
-				showSuccess(t('mail', 'Message sent'))
-			} catch (error) {
-				showError(t('mail', 'Could not send message'))
+		async sendMessageNow() {
+			const message = {
+				...this.message,
+				sendAt: (new Date().getTime() + UNDO_DELAY) / 1000,
 			}
+			await this.$store.dispatch('outbox/updateMessage', { message, id: message.id })
+			await this.$store.dispatch('outbox/sendMessageWithUndo', { id: message.id })
 		},
 		async openModal() {
 			await this.$store.dispatch('showMessageComposer', {
