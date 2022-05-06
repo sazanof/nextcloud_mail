@@ -636,7 +636,7 @@ export default {
 					return value ? moment(value, 'LLL').toDate() : null
 				},
 			},
-			autoLimit: true
+			autoLimit: true,
 			editorRichInputTextReady: false,
 		}
 	},
@@ -1209,8 +1209,8 @@ export default {
 
 .composer-fields {
 	display: flex;
-	// align-items: flex-start;
 	border-top: 1px solid var(--color-border);
+	align-items: center;
 
 	.multiselect__tag {
 		position: relative;
