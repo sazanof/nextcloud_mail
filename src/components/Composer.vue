@@ -46,8 +46,13 @@
 					:loading="loadingIndicatorTo"
 					v-bind:auto-limit="autoLimit"
 					@input="callSaveDraft(true, getMessageData)"
+<<<<<<< HEAD
 					@tag="onNewToAddr"
 					@search-change="onAutocomplete($event, 'to')">
+=======
+				    @tag="onNewToAddr"
+				    @search-change="onAutocomplete($event, 'to')">
+>>>>>>> enh/mail-multiselect-reciepients-edit
 					<template #tag="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
 							<ListItemIcon
@@ -92,7 +97,7 @@
 					label="label"
 					track-by="email"
 					:multiple="true"
-					:placeholder="t('mail', 'Contact or email address …')"
+					:placeholder="t('mail', '')"
 					:clear-on-select="false"
 					:show-no-options="false"
 					:preserve-search="true"
@@ -100,8 +105,13 @@
 					v-bind:auto-limit="autoLimit"
 					:hide-selected="true"
 					@input="callSaveDraft(true, getMessageData)"
+<<<<<<< HEAD
 					@tag="onNewCcAddr"
 					@search-change="onAutocomplete($event, 'cc')">
+=======
+				    @tag="onNewCcAddr"
+				    @search-change="onAutocomplete($event, 'cc')">
+>>>>>>> enh/mail-multiselect-reciepients-edit
 					<template #tag="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
 							<ListItemIcon
@@ -148,8 +158,13 @@
 					:loading="loadingIndicatorBcc"
 					:hide-selected="true"
 					@input="callSaveDraft(true, getMessageData)"
+<<<<<<< HEAD
 					@tag="onNewBccAddr"
 					@search-change="onAutocomplete($event, 'bcc')">
+=======
+				    @tag="onNewBccAddr"
+				    @search-change="onAutocomplete($event, 'bcc')">
+>>>>>>> enh/mail-multiselect-reciepients-edit
 					<template #tag="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
 							<ListItemIcon
@@ -1218,6 +1233,7 @@ export default {
 .composer-fields {
 	display: flex;
 	border-top: 1px solid var(--color-border);
+	align-items: center;
 
 	.multiselect__tag {
 		position: relative;
