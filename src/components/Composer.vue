@@ -41,8 +41,8 @@
 					:loading="loadingIndicatorTo"
 					:auto-limit="autoLimit"
 					@input="callSaveDraft(true, getMessageData)"
-					@tag="onNewToAddr"
-					@search-change="onAutocomplete($event, 'to')">
+				    @tag="onNewToAddr"
+				    @search-change="onAutocomplete($event, 'to')">
 					<template #tag="{ option }">
 						<RecipientListItem
 							:option="option"
@@ -97,8 +97,8 @@
 					:auto-limit="autoLimit"
 					:hide-selected="true"
 					@input="callSaveDraft(true, getMessageData)"
-					@tag="onNewCcAddr"
-					@search-change="onAutocomplete($event, 'cc')">
+				    @tag="onNewCcAddr"
+				    @search-change="onAutocomplete($event, 'cc')">
 					<template #tag="{ option }">
 						<RecipientListItem
 							:option="option"
@@ -146,8 +146,8 @@
 					:loading="loadingIndicatorBcc"
 					:hide-selected="true"
 					@input="callSaveDraft(true, getMessageData)"
-					@tag="onNewBccAddr"
-					@search-change="onAutocomplete($event, 'bcc')">
+				    @tag="onNewBccAddr"
+				    @search-change="onAutocomplete($event, 'bcc')">
 					<template #tag="{ option }">
 						<RecipientListItem
 							:option="option"
