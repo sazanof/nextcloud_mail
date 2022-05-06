@@ -46,13 +46,8 @@
 					:loading="loadingIndicatorTo"
 					v-bind:auto-limit="autoLimit"
 					@input="callSaveDraft(true, getMessageData)"
-<<<<<<< HEAD
-					@tag="onNewToAddr"
-					@search-change="onAutocomplete($event, 'to')">
-=======
 				    @tag="onNewToAddr"
 				    @search-change="onAutocomplete($event, 'to')">
->>>>>>> enh/mail-multiselect-reciepients-edit
 					<template #tag="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
 							<ListItemIcon
@@ -105,13 +100,8 @@
 					v-bind:auto-limit="autoLimit"
 					:hide-selected="true"
 					@input="callSaveDraft(true, getMessageData)"
-<<<<<<< HEAD
-					@tag="onNewCcAddr"
-					@search-change="onAutocomplete($event, 'cc')">
-=======
 				    @tag="onNewCcAddr"
 				    @search-change="onAutocomplete($event, 'cc')">
->>>>>>> enh/mail-multiselect-reciepients-edit
 					<template #tag="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
 							<ListItemIcon
@@ -158,13 +148,8 @@
 					:loading="loadingIndicatorBcc"
 					:hide-selected="true"
 					@input="callSaveDraft(true, getMessageData)"
-<<<<<<< HEAD
-					@tag="onNewBccAddr"
-					@search-change="onAutocomplete($event, 'bcc')">
-=======
 				    @tag="onNewBccAddr"
 				    @search-change="onAutocomplete($event, 'bcc')">
->>>>>>> enh/mail-multiselect-reciepients-edit
 					<template #tag="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
 							<ListItemIcon
