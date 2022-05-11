@@ -17,13 +17,9 @@
 			:draft="saveDraft"
 			:send="sendMessage"
 			:forwarded-messages="forwardedMessages"
-<<<<<<< HEAD
 			:forward-from="composerData.forwardFrom"
 			@discard-draft="discardDraft"
 			@close="$emit('close')" />
-=======
-			@discard-draft="discardDraft" />
->>>>>>> main
 	</Modal>
 </template>
 <script>
