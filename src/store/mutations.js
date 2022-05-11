@@ -181,13 +181,13 @@ export default {
 		}
 		removeRec(account)
 	},
-	showMessageComposer(state, { type, data, forwardedMessages }) {
-		console.log(data);
+	showMessageComposer(state, { type, data, forwardedMessages, originalSendAt }) {
 		Vue.set(state, 'newMessage', {
 			type,
 			data,
 			options: {
 				forwardedMessages,
+				originalSendAt,
 			},
 		})
 	},
