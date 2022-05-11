@@ -2,7 +2,7 @@
 	<Modal
 		size="normal"
 		:title="modalTitle"
-		@close="$emit('close')">
+		@close="$emit('close', { restoreOriginalSendAt: true })">
 		<Composer
 			:from-account="composerData.accountId"
 			:to="composerData.to"
@@ -17,8 +17,7 @@
 			:draft="saveDraft"
 			:send="sendMessage"
 			:forwarded-messages="forwardedMessages"
-			@discard-draft="discardDraft"
-			@close="$emit('close')" />
+			@discard-draft="discardDraft" />
 	</Modal>
 </template>
 <script>
@@ -106,7 +105,7 @@ export default {
 				bcc: serializeRecipients ? data.bcc.map(this.recipientToRfc822).join(', ') : data.bcc,
 				attachments: data.attachments,
 				aliasId: data.aliasId,
-				inReplyToMessageId: null,
+				inReplyToMessageId: data.inReplyToMessageId,
 				sendAt: data.sendAt,
 			}
 		},

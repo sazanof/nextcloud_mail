@@ -308,14 +308,6 @@
 							@uncheck="encrypt = false">
 							{{ t('mail', 'Encrypt message with Mailvelope') }}
 						</ActionCheckbox>
-						<ActionLink v-else
-							href="https://www.mailvelope.com/"
-							target="_blank"
-							icon="icon-password">
-							{{
-								t('mail', 'Looking for a way to encrypt your emails? Install the Mailvelope browser extension!')
-							}}
-						</ActionLink>
 					</template>
 					<template v-if="isMoreActionsOpen">
 						<ActionButton :close-after-click="false"
@@ -441,7 +433,6 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import ActionRadio from '@nextcloud/vue/dist/Components/ActionRadio'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
@@ -502,7 +493,6 @@ export default {
 		ActionButton,
 		ActionCheckbox,
 		ActionInput,
-		ActionLink,
 		ActionRadio,
 		VButton: Button,
 		ComposerAttachments,
@@ -840,8 +830,8 @@ export default {
 			} else {
 				this.selectedAlias = this.aliases[0]
 			}
-			// only overwrite editormode if no body provided
-			if (previous === NO_ALIAS_SET && !this.body) {
+			// Only overwrite editormode if body is empty
+			if (previous === NO_ALIAS_SET && (!this.body || this.body.value === '')) {
 				this.editorMode = this.selectedAlias.editorMode
 			}
 		},
@@ -890,7 +880,7 @@ export default {
 				subject: this.subjectVal,
 				body: this.encrypt ? plain(this.bodyVal) : html(this.bodyVal),
 				attachments: this.attachments,
-				messageId: this.replyTo ? this.replyTo.databaseId : undefined,
+				inReplyToMessageId: this.replyTo ? this.replyTo.messageId : undefined,
 				isHtml: !this.editorPlainText,
 				requestMdn: this.requestMdn,
 				sendAt: this.sendAtVal ? Math.floor(this.sendAtVal / 1000) : undefined,
