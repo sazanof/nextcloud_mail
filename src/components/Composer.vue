@@ -5,17 +5,24 @@
 				{{ t('mail', 'From') }}
 			</label>
 			<div class="composer-fields--custom">
-				<Multiselect
-					id="from"
-					:value="selectedAlias"
-					:options="aliases"
-					label="name"
-					track-by="selectId"
-					:searchable="false"
-					:custom-label="formatAliases"
-					:placeholder="t('mail', 'Select account')"
-					:clear-on-select="false"
-					@select="onAliasChange" />
+			<Multiselect
+				id="from"
+				:value="selectedAlias"
+				:options="aliases"
+				label="name"
+				track-by="selectId"
+				:searchable="false"
+				:custom-label="formatAliases"
+				:placeholder="t('mail', 'Select account')"
+				:clear-on-select="false"
+				@select="onAliasChange" />
+				<button 
+					:title="t('mail','Toggle recipients list mode')" 
+					:class="{'active':!autoLimit}"
+					@click.prevent="autoLimit = !autoLimit">
+					<UnfoldMoreHorizontal v-if="autoLimit" :size="24" />
+					<UnfoldLessHorizontal v-else :size="24" />
+				</button>
 			</div>
 		</div>
 		<div class="composer-fields">
@@ -33,29 +40,21 @@
 					track-by="email"
 					:multiple="true"
 					:placeholder="t('mail', 'Contact or email address …')"
-					:clear-on-select="false"
+					:clear-on-select="true"
 					:close-on-select="false"
 					:show-no-options="false"
 					:preserve-search="true"
 					:hide-selected="true"
 					:loading="loadingIndicatorTo"
-					:auto-limit="autoLimit"
+					:limit-text="limitText"
+					v-bind:auto-limit="autoLimit"
 					@input="callSaveDraft(true, getMessageData)"
 				    @tag="onNewToAddr"
 				    @search-change="onAutocomplete($event, 'to')">
 					<template #tag="{ option }">
-						<RecipientListItem
-							:option="option"
-							@remove-recipient="onRemoveRecipient(option, 'to')" />
-					</template>
-					<template #option="{ option }">
-						<div class="multiselect__tag multiselect__tag-custom">
-							<ListItemIcon
-								:no-margin="true"
-								:title="option.label"
-								:subtitle="option.email"
-								:avatar-size="24" />
-						</div>
+						<RecipientListItem 
+						:option="option" 
+						@remove-recipient="onRemoveRecipient(option, 'to')" />
 					</template>
 					<template #option="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
@@ -67,14 +66,13 @@
 						</div>
 					</template>
 				</Multiselect>
-				<button
-					:title="t('mail','Toggle recipients list mode')"
-					:class="{'active':!autoLimit}"
-					@click.prevent="toggleViewMode">
-					<UnfoldMoreHorizontal v-if="autoLimit" :size="24" />
-					<UnfoldLessHorizontal v-else :size="24" />
-				</button>
-			</div>
+				<button 
+					v-if="!showCC"
+					:title="t('mail', '+ Cc/Bcc')" 
+					@click.prevent="showCC = !showCC">
+					<AccountMultiplePlus :size="24" />
+				</button>		
+			</div>	
 		</div>
 		<div v-if="showCC" class="composer-fields">
 			<label for="cc" class="cc-label">
@@ -90,7 +88,7 @@
 					track-by="email"
 					:multiple="true"
 					:placeholder="t('mail', 'Contact or email address …')"
-					:clear-on-select="false"
+					:clear-on-select="true"
 					:show-no-options="false"
 					:preserve-search="true"
 					:loading="loadingIndicatorCc"
@@ -100,18 +98,9 @@
 				    @tag="onNewCcAddr"
 				    @search-change="onAutocomplete($event, 'cc')">
 					<template #tag="{ option }">
-						<RecipientListItem
-							:option="option"
-							@remove-recipient="onRemoveRecipient(option, 'cc')" />
-					</template>
-					<template #option="{ option }">
-						<div class="multiselect__tag multiselect__tag-custom">
-							<ListItemIcon
-								:no-margin="true"
-								:title="option.label"
-								:subtitle="option.email"
-								:avatar-size="24" />
-						</div>
+						<RecipientListItem 
+						:option="option" 
+						@remove-recipient="onRemoveRecipient(option, 'cc')" />
 					</template>
 					<template #option="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
@@ -149,9 +138,9 @@
 				    @tag="onNewBccAddr"
 				    @search-change="onAutocomplete($event, 'bcc')">
 					<template #tag="{ option }">
-						<RecipientListItem
-							:option="option"
-							@remove-recipient="onRemoveRecipient(option, 'bcc')" />
+						<RecipientListItem 
+						:option="option" 
+						@remove-recipient="onRemoveRecipient(option, 'bcc')" />
 					</template>
 					<template #option="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
@@ -432,6 +421,7 @@ import ListItemIcon from '@nextcloud/vue/dist/Components/ListItemIcon'
 import RecipientListItem from './RecipientListItem'
 import UnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal'
 import UnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal'
+import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus'
 import { showError } from '@nextcloud/dialogs'
 import { translate as t, getCanonicalLocale, getFirstDay, getLocale } from '@nextcloud/l10n'
 import Vue from 'vue'
@@ -499,6 +489,7 @@ export default {
 		SendClock,
 		UnfoldMoreHorizontal,
 		UnfoldLessHorizontal,
+		AccountMultiplePlus
 	},
 	props: {
 		fromAccount: {
@@ -838,6 +829,10 @@ export default {
 		if (this.sendAt && this.isSendAtCustom) {
 			this.selectedDate = new Date(this.sendAt)
 		}
+
+		this.$root.$on('eventing', data => {
+        	console.log(data);
+    	});
 	},
 	beforeDestroy() {
 		window.removeEventListener('mailvelope', this.onMailvelopeLoaded)
@@ -1251,20 +1246,6 @@ export default {
 
 	.multiselect__tag {
 		position: relative;
-	}
-
-	.multiselect__tag {
-		position: relative;
-		
-		.action-item--single  {
-			width:auto;
-			min-width: 24px;
-			height: 24px;
-			min-height: 24px;
-			position: absolute;
-			right: 0;
-		}
-
 	}	
 
 	&.mail-account {
