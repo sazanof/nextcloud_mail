@@ -20,12 +20,10 @@
 			:draft="saveDraft"
 			:send="sendMessage"
 			:forwarded-messages="forwardedMessages"
-<<<<<<< HEAD
-			@discard-draft="discardDraft" />
-=======
 			:forward-from="composerData.forwardFrom"
 			@close="$emit('close')" />
->>>>>>> Try to fix no-attachments in forward
+
+
 	</Modal>
 </template>
 <script>
@@ -126,13 +124,6 @@ export default {
 			//for (const attachment of data.attachments) {
 				//if (!attachment.type) {
 					// todo move to backend: https://github.com/nextcloud/mail/issues/6227
-<<<<<<< HEAD
-					attachment.type = 'local'
-				}
-			}
-			const dataForServer = this.getDataForServer({
-				...data,
-=======
 				//	attachment.type = 'local'
 				//}
 			//}
@@ -147,9 +138,8 @@ export default {
 				attachments: data.attachments,
 				aliasId: data.aliasId,
 				inReplyToMessageId: null,
->>>>>>> Try to fix no-attachments in forward
 				sendAt: data.sendAt ? data.sendAt : Math.floor((now + UNDO_DELAY) / 1000),
-			})
+			}
 			if (dataForServer.sendAt < Math.floor((now + UNDO_DELAY) / 1000)) {
 				dataForServer.sendAt = Math.floor((now + UNDO_DELAY) / 1000)
 			}
