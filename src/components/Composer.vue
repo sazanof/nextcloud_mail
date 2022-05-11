@@ -17,9 +17,11 @@
 				:clear-on-select="false"
 				@select="onAliasChange" />
 				<button 
-					title="" 
-					:class="['icon-more',{'active':!autoLimit}]"
+					:title="t('mail','Toggle recipients list mode')" 
+					:class="{'active':!autoLimit}"
 					@click.prevent="autoLimit = !autoLimit">
+					<UnfoldMoreHorizontal v-if="autoLimit" :size="24" />
+					<UnfoldLessHorizontal v-else :size="24" />
 				</button>
 			</div>
 		</div>
@@ -38,29 +40,21 @@
 					track-by="email"
 					:multiple="true"
 					:placeholder="t('mail', 'Contact or email address …')"
-					:clear-on-select="false"
+					:clear-on-select="true"
 					:close-on-select="false"
 					:show-no-options="false"
 					:preserve-search="true"
 					:hide-selected="true"
 					:loading="loadingIndicatorTo"
+					:limit-text="limitText"
 					v-bind:auto-limit="autoLimit"
 					@input="callSaveDraft(true, getMessageData)"
 				    @tag="onNewToAddr"
 				    @search-change="onAutocomplete($event, 'to')">
 					<template #tag="{ option }">
-						<div class="multiselect__tag multiselect__tag-custom">
-							<ListItemIcon
-								:no-margin="true"
-								:title="option.label"
-								:avatar-size="24" />
-							<Actions>
-								<ActionButton
-									icon="icon-close"
-									@click.prevent="removeRecipientTo(option)"
-								/>
-							</Actions>
-						</div>
+						<RecipientListItem 
+						:option="option" 
+						@remove-recipient="onRemoveRecipient(option, 'to')" />
 					</template>
 					<template #option="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
@@ -73,9 +67,10 @@
 					</template>
 				</Multiselect>
 				<button 
+					v-if="!showCC"
 					:title="t('mail', '+ Cc/Bcc')" 
-					:class="['icon-group',{'active':showCC}]"
 					@click.prevent="showCC = !showCC">
+					<AccountMultiplePlus :size="24" />
 				</button>		
 			</div>	
 		</div>
@@ -92,8 +87,8 @@
 					label="label"
 					track-by="email"
 					:multiple="true"
-					:placeholder="t('mail', '')"
-					:clear-on-select="false"
+					:placeholder="t('mail', 'Contact or email address …')"
+					:clear-on-select="true"
 					:show-no-options="false"
 					:preserve-search="true"
 					:loading="loadingIndicatorCc"
@@ -103,17 +98,9 @@
 				    @tag="onNewCcAddr"
 				    @search-change="onAutocomplete($event, 'cc')">
 					<template #tag="{ option }">
-						<div class="multiselect__tag multiselect__tag-custom">
-							<ListItemIcon
-								:no-margin="true"
-								:title="option.label"
-								:avatar-size="24" />
-							<Actions>
-								<ActionButton
-									icon="icon-close"
-									@click.prevent="removeRecipientCc(option)" />
-							</Actions>
-						</div>
+						<RecipientListItem 
+						:option="option" 
+						@remove-recipient="onRemoveRecipient(option, 'cc')" />
 					</template>
 					<template #option="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
@@ -141,9 +128,9 @@
 					label="label"
 					track-by="email"
 					:multiple="true"
-					:placeholder="t('mail', '')"
+					:placeholder="t('mail', 'Contact or email address …')"
 					:show-no-options="false"
-					:clear-on-select="false"
+					:clear-on-select="true"
 					:preserve-search="true"
 					:loading="loadingIndicatorBcc"
 					:hide-selected="true"
@@ -151,17 +138,9 @@
 				    @tag="onNewBccAddr"
 				    @search-change="onAutocomplete($event, 'bcc')">
 					<template #tag="{ option }">
-						<div class="multiselect__tag multiselect__tag-custom">
-							<ListItemIcon
-								:no-margin="true"
-								:title="option.label"
-								:avatar-size="24" />
-							<Actions>
-								<ActionButton
-									icon="icon-close"
-									@click.prevent="removeRecipientBcc(option)"	/>
-							</Actions>
-						</div>
+						<RecipientListItem 
+						:option="option" 
+						@remove-recipient="onRemoveRecipient(option, 'bcc')" />
 					</template>
 					<template #option="{ option }">
 						<div class="multiselect__tag multiselect__tag-custom">
@@ -444,6 +423,10 @@ import Download from 'vue-material-design-icons/Download'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import ListItemIcon from '@nextcloud/vue/dist/Components/ListItemIcon'
+import RecipientListItem from './RecipientListItem'
+import UnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal'
+import UnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal'
+import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus'
 import { showError } from '@nextcloud/dialogs'
 import { translate as t, getCanonicalLocale, getFirstDay, getLocale } from '@nextcloud/l10n'
 import Vue from 'vue'
@@ -506,8 +489,12 @@ export default {
 		TextEditor,
 		EmptyContent,
 		ListItemIcon,
+		RecipientListItem,
 		Send,
 		SendClock,
+		UnfoldMoreHorizontal,
+		UnfoldLessHorizontal,
+		AccountMultiplePlus
 	},
 	props: {
 		fromAccount: {
@@ -820,6 +807,10 @@ export default {
 		if (this.sendAt && this.isSendAtCustom) {
 			this.selectedDate = new Date(this.sendAt)
 		}
+
+		this.$root.$on('eventing', data => {
+        	console.log(data);
+    	});
 	},
 	beforeDestroy() {
 		window.removeEventListener('mailvelope', this.onMailvelopeLoaded)
@@ -1167,15 +1158,21 @@ export default {
 		 * @param {Array} option Current option from Multiselect
 		 * @param {Array} list List of recipients (ex. this.selectTo)
 		 */
+		onRemoveRecipient(option, field){
+			switch (field){
+				case 'to': 
+					this.removeRecipientTo(option)
+					break
+				case 'cc':
+					this.removeRecipientCc(option)
+					break
+				case 'bcc':
+					this.removeRecipientBcc(option)
+					break
+			}
+		},
 		removeRecipient(option, list){
-			let _list = list.slice()
-			_list.map((item,index) => {
-				if(item.email === option.email){
-					console.log(index,item,option);
-					_list.splice(index,1)
-				}			
-			});
-			return _list
+			return list.filter((recipient) => recipient.email !== option.email)
 		},
 		removeRecipientTo(option){
 			this.selectTo = this.removeRecipient(option,this.selectTo)
@@ -1185,7 +1182,10 @@ export default {
 		},
 		removeRecipientBcc(option){
 			this.selectBcc = this.removeRecipient(option,this.selectBcc)
-		}
+		},
+		limitText: function(a,b){
+            console.log(a,b)
+        }
 	},
 }
 </script>
@@ -1208,20 +1208,17 @@ export default {
 .composer-fields {
 	display: flex;
 	border-top: 1px solid var(--color-border);
-	align-items: center;
+	align-items: flex-start;
+
+	.multiselect.multiselect--multiple::after {
+		position:absolute;
+		right: 0;
+		top: auto;
+		bottom:8px
+	}
 
 	.multiselect__tag {
 		position: relative;
-		
-		.action-item--single  {
-			width:auto;
-			min-width: 24px;
-			height: 24px;
-			min-height: 24px;
-			position: absolute;
-			right: 0;
-		}
-
 	}	
 
 	&.mail-account {
@@ -1344,15 +1341,13 @@ export default {
 ::v-deep .multiselect .multiselect__tags {
 	border: none !important;
 }
+::v-deep [data-select="create"] .avatardiv--unknown {
+	background: var(--color-text-maxcontrast) !important;
+}
 ::v-deep .multiselect.opened .multiselect__tags .multiselect__tags-wrap {
 	flex-wrap: wrap;
 }
-::v-deep .multiselect .multiselect__tags .multiselect__tags-wrap .multiselect__tag-custom {
-	padding:0 25px 0 0;
-	border-radius:25px;
-	border-color: transparent;
-	background-color: var(--color-background-dark);
-}
+
 .submit-message.send.primary.icon-confirm-white {
 	color: var(--color-main-background);
 }
