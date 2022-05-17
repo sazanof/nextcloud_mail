@@ -16,13 +16,6 @@
 				:placeholder="t('mail', 'Select account')"
 				:clear-on-select="false"
 				@select="onAliasChange" />
-				<button
-					:title="t('mail','Toggle recipients list mode')"
-					:class="{'active':!autoLimit}"
-					@click.prevent="autoLimit = !autoLimit">
-					<UnfoldMoreHorizontal v-if="autoLimit" :size="24" />
-					<UnfoldLessHorizontal v-else :size="24" />
-				</button>
 			</div>
 		</div>
 		<div class="composer-fields">
@@ -66,10 +59,11 @@
 					</template>
 				</Multiselect>
 				<button
-					v-if="!showCC"
-					:title="t('mail', '+ Cc/Bcc')"
-					@click.prevent="showCC = !showCC">
-					<AccountMultiplePlus :size="24" />
+					:title="t('mail','Toggle recipients list mode')"
+					:class="{'active':!autoLimit}"
+					@click.prevent="toggleViewMode">
+					<UnfoldMoreHorizontal v-if="autoLimit" :size="24" />
+					<UnfoldLessHorizontal v-else :size="24" />
 				</button>
 			</div>
 		</div>
@@ -1197,6 +1191,11 @@ export default {
 		},
 		removeRecipientBcc(option){
 			this.selectBcc = this.removeRecipient(option,this.selectBcc)
+		},
+		toggleViewMode(){
+			this.autoLimit = !this.autoLimit;
+			this.showCC = this.showCC && this.selectCc.length === 0 && this.autoLimit ? false : true
+			this.showBCC = this.showBCC && this.selectBcc.length === 0 && this.autoLimit ? false : true
 		}
 	},
 }
