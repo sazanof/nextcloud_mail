@@ -466,19 +466,6 @@ class MessageMapper extends QBMapper {
 		$perf->step("Untagged messages");
 	}
 
-	public function getTags(Message $message) : array {
-		$mqb = $this->db->getQueryBuilder();
-		$mqb->select('tag_id')
-			->from('mail_message_tags')
-			->where($mqb->expr()->eq('imap_message_id', $mqb->createNamedParameter($message->getMessageId())));
-		$result = $mqb->execute();
-		$ids = array_map(function (array $row) {
-			return (int)$row['tag_id'];
-		}, $result->fetchAll());
-
-		return $ids;
-	}
-
 	/**
 	 * @param Message ...$messages
 	 *
@@ -508,7 +495,11 @@ class MessageMapper extends QBMapper {
 				$query->setParameter('uid', $message->getUid(), IQueryBuilder::PARAM_INT);
 				$query->setParameter('mailbox_id', $message->getMailboxId(), IQueryBuilder::PARAM_INT);
 				$query->setParameter('flag_attachments', $message->getFlagAttachments(), $message->getFlagAttachments() === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_BOOL);
-				$query->setParameter('preview_text', $message->getPreviewText(), $message->getPreviewText() === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR);
+				$query->setParameter(
+					'preview_text',
+					$message->getPreviewText() === null ? null : mb_strcut($message->getPreviewText(), 0, 255),
+					$message->getPreviewText() === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR
+				);
 
 				$query->execute();
 			}
@@ -1179,6 +1170,7 @@ class MessageMapper extends QBMapper {
 			);
 		$result = $select->execute();
 		$rows = $result->fetchAll();
+		$result->closeCursor();
 		if (empty($rows)) {
 			return null;
 		}

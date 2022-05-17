@@ -16,13 +16,6 @@
 				:placeholder="t('mail', 'Select account')"
 				:clear-on-select="false"
 				@select="onAliasChange" />
-				<button 
-					:title="t('mail','Toggle recipients list mode')" 
-					:class="{'active':!autoLimit}"
-					@click.prevent="autoLimit = !autoLimit">
-					<UnfoldMoreHorizontal v-if="autoLimit" :size="24" />
-					<UnfoldLessHorizontal v-else :size="24" />
-				</button>
 			</div>
 		</div>
 		<div class="composer-fields">
@@ -46,14 +39,13 @@
 					:preserve-search="true"
 					:hide-selected="true"
 					:loading="loadingIndicatorTo"
-					:limit-text="limitText"
 					v-bind:auto-limit="autoLimit"
 					@input="callSaveDraft(true, getMessageData)"
-				    @tag="onNewToAddr"
-				    @search-change="onAutocomplete($event, 'to')">
+					@tag="onNewToAddr"
+					@search-change="onAutocomplete($event, 'to')">
 					<template #tag="{ option }">
-						<RecipientListItem 
-						:option="option" 
+						<RecipientListItem
+						:option="option"
 						@remove-recipient="onRemoveRecipient(option, 'to')" />
 					</template>
 					<template #option="{ option }">
@@ -66,13 +58,14 @@
 						</div>
 					</template>
 				</Multiselect>
-				<button 
-					v-if="!showCC"
-					:title="t('mail', '+ Cc/Bcc')" 
-					@click.prevent="showCC = !showCC">
-					<AccountMultiplePlus :size="24" />
-				</button>		
-			</div>	
+				<button
+					:title="t('mail','Toggle recipients list mode')"
+					:class="{'active':!autoLimit}"
+					@click.prevent="toggleViewMode">
+					<UnfoldMoreHorizontal v-if="autoLimit" :size="24" />
+					<UnfoldLessHorizontal v-else :size="24" />
+				</button>
+			</div>
 		</div>
 		<div v-if="showCC" class="composer-fields">
 			<label for="cc" class="cc-label">
@@ -95,11 +88,11 @@
 					v-bind:auto-limit="autoLimit"
 					:hide-selected="true"
 					@input="callSaveDraft(true, getMessageData)"
-				    @tag="onNewCcAddr"
-				    @search-change="onAutocomplete($event, 'cc')">
+					@tag="onNewCcAddr"
+					@search-change="onAutocomplete($event, 'cc')">
 					<template #tag="{ option }">
-						<RecipientListItem 
-						:option="option" 
+						<RecipientListItem
+						:option="option"
 						@remove-recipient="onRemoveRecipient(option, 'cc')" />
 					</template>
 					<template #option="{ option }">
@@ -115,7 +108,7 @@
 				</Multiselect>
 			</div>
 		</div>
-		<div v-if="showCC" class="composer-fields">
+		<div v-if="showBCC" class="composer-fields">
 			<label for="bcc" class="bcc-label">
 				{{ t('mail', 'Bcc') }}
 			</label>
@@ -135,11 +128,11 @@
 					:loading="loadingIndicatorBcc"
 					:hide-selected="true"
 					@input="callSaveDraft(true, getMessageData)"
-				    @tag="onNewBccAddr"
-				    @search-change="onAutocomplete($event, 'bcc')">
+					@tag="onNewBccAddr"
+					@search-change="onAutocomplete($event, 'bcc')">
 					<template #tag="{ option }">
-						<RecipientListItem 
-						:option="option" 
+						<RecipientListItem
+						:option="option"
 						@remove-recipient="onRemoveRecipient(option, 'bcc')" />
 					</template>
 					<template #option="{ option }">
@@ -571,6 +564,7 @@ export default {
 
 		return {
 			showCC: this.cc.length > 0,
+			showBCC: this.bcc.length > 0,
 			selectedAlias: NO_ALIAS_SET, // Fixed in `beforeMount`
 			autocompleteRecipients: this.to.concat(this.cc).concat(this.bcc),
 			newRecipients: [],
@@ -1154,13 +1148,13 @@ export default {
 		},
 		/**
 		 * Remove recipient from recipients array (To,Cc,Bcc)
-		 * 
+		 *
 		 * @param {Array} option Current option from Multiselect
 		 * @param {Array} list List of recipients (ex. this.selectTo)
 		 */
 		onRemoveRecipient(option, field){
 			switch (field){
-				case 'to': 
+				case 'to':
 					this.removeRecipientTo(option)
 					break
 				case 'cc':
@@ -1183,9 +1177,11 @@ export default {
 		removeRecipientBcc(option){
 			this.selectBcc = this.removeRecipient(option,this.selectBcc)
 		},
-		limitText: function(a,b){
-            console.log(a,b)
-        }
+		toggleViewMode(){
+			this.autoLimit = !this.autoLimit;
+			this.showCC = this.showCC && this.selectCc.length === 0 && this.autoLimit ? false : true
+			this.showBCC = this.showBCC && this.selectBcc.length === 0 && this.autoLimit ? false : true
+		}
 	},
 }
 </script>
@@ -1219,7 +1215,7 @@ export default {
 
 	.multiselect__tag {
 		position: relative;
-	}	
+	}
 
 	&.mail-account {
 		border-top: none;
@@ -1242,10 +1238,10 @@ export default {
 
 	.composer-fields--custom {
 		display: flex;
-   		align-items: flex-start;
-    	flex-wrap: wrap;
+		align-items: flex-start;
+		flex-wrap: wrap;
 		padding-top:5px;
-    	width: calc(100% - 120px);
+		width: calc(100% - 120px);
 
 		button {
 			margin-top: 0;
@@ -1261,7 +1257,6 @@ export default {
 		.multiselect {
 			width: calc(100% - 150px);
 		}
-	
 	}
 
 	.multiselect {

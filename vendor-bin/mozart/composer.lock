@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "158cf2d7db6ee13775ddf4330bafbee2",
+    "content-hash": "23896333b32bfe3507db7bcffd56cf69",
     "packages": [
         {
             "name": "coenjacobs/mozart",
@@ -52,6 +52,10 @@
                 }
             ],
             "description": "Composes all dependencies as a package inside a WordPress plugin",
+            "support": {
+                "issues": "https://github.com/coenjacobs/mozart/issues",
+                "source": "https://github.com/coenjacobs/mozart/tree/0.7.1"
+            },
             "funding": [
                 {
                     "url": "https://github.com/coenjacobs",
@@ -142,6 +146,10 @@
                 "sftp",
                 "storage"
             ],
+            "support": {
+                "issues": "https://github.com/thephpleague/flysystem/issues",
+                "source": "https://github.com/thephpleague/flysystem/tree/1.1.9"
+            },
             "funding": [
                 {
                     "url": "https://offset.earth/frankdejonge",
@@ -190,6 +198,10 @@
                 }
             ],
             "description": "Mime-type detection for Flysystem",
+            "support": {
+                "issues": "https://github.com/thephpleague/mime-type-detection/issues",
+                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.11.0"
+            },
             "funding": [
                 {
                     "url": "https://github.com/frankdejonge",
@@ -204,20 +216,20 @@
         },
         {
             "name": "psr/container",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/container.git",
-                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf"
+                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/container/zipball/8622567409010282b7aeebe4bb841fe98b58dcaf",
-                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/513e0666f7216c7459170d56df27dfcefe1689ea",
+                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.0"
+                "php": ">=7.4.0"
             },
             "type": "library",
             "autoload": {
@@ -244,7 +256,11 @@
                 "container-interop",
                 "psr"
             ],
-            "time": "2021-03-05T17:36:06+00:00"
+            "support": {
+                "issues": "https://github.com/php-fig/container/issues",
+                "source": "https://github.com/php-fig/container/tree/1.1.2"
+            },
+            "time": "2021-11-05T16:50:12+00:00"
         },
         {
             "name": "symfony/console",
@@ -326,6 +342,9 @@
                 "console",
                 "terminal"
             ],
+            "support": {
+                "source": "https://github.com/symfony/console/tree/v5.4.8"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -390,6 +409,9 @@
             ],
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v2.5.1"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -450,6 +472,9 @@
             ],
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/finder/tree/v5.4.8"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -529,6 +554,9 @@
                 "polyfill",
                 "portable"
             ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.25.0"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -607,6 +635,9 @@
                 "portable",
                 "shim"
             ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-intl-grapheme/tree/v1.25.0"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -688,6 +719,9 @@
                 "portable",
                 "shim"
             ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.25.0"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -768,6 +802,9 @@
                 "portable",
                 "shim"
             ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.25.0"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -844,6 +881,9 @@
                 "portable",
                 "shim"
             ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php73/tree/v1.25.0"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -924,6 +964,9 @@
                 "portable",
                 "shim"
             ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.25.0"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -1004,6 +1047,9 @@
                 "interoperability",
                 "standards"
             ],
+            "support": {
+                "source": "https://github.com/symfony/service-contracts/tree/v2.5.1"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -1087,6 +1133,9 @@
                 "utf-8",
                 "utf8"
             ],
+            "support": {
+                "source": "https://github.com/symfony/string/tree/v5.4.8"
+            },
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -1113,7 +1162,7 @@
     "platform": [],
     "platform-dev": [],
     "platform-overrides": {
-        "php": "7.3"
+        "php": "7.4"
     },
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.3.0"
 }

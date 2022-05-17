@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: [7.3, 7.4]
-        nextcloud-versions: ['stable21', 'stable22', 'stable23']
+        php-versions: [7.4]
+        nextcloud-versions: ['stable22', 'stable23']
         include:
             - php-versions: 7.4
               nextcloud-versions: stable24
@@ -29,7 +29,6 @@ jobs:
       uses: shivammathur/setup-php@master
       with:
         php-version: ${{ matrix.php-versions }}
-        tools: composer:v1
         extensions: ctype,curl,dom,gd,iconv,intl,json,mbstring,openssl,posix,sqlite,xml,zip,gmp
         coverage: xdebug
     - name: Checkout Nextcloud
@@ -112,7 +111,6 @@ jobs:
             uses: shivammathur/setup-php@master
             with:
                 php-version: ${{ matrix.php-versions }}
-                tools: composer:v1
                 extensions: ctype,curl,dom,gd,iconv,intl,json,mbstring,openssl,posix,sqlite,xml,zip,gmp
                 coverage: xdebug
           - name: Checkout Nextcloud

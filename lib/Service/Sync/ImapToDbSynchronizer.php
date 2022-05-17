@@ -53,6 +53,7 @@ use Throwable;
 use function array_chunk;
 use function array_filter;
 use function array_map;
+use function sprintf;
 
 class ImapToDbSynchronizer {
 
@@ -293,34 +294,40 @@ class ImapToDbSynchronizer {
 		);
 
 		$highestKnownUid = $this->dbMapper->findHighestUid($mailbox);
-		$client = $this->clientFactory->getClient($account);
+		$client = $this->clientFactory->getClient($account, false);
 		try {
 			try {
 				$imapMessages = $this->imapMapper->findAll(
 					$client,
 					$mailbox->getName(),
 					self::MAX_NEW_MESSAGES,
-					$highestKnownUid ?? 0
+					$highestKnownUid ?? 0,
+					$logger,
+					$perf
 				);
-				$perf->step('fetch all messages from IMAP');
+				$perf->step(sprintf('fetch %d messages from IMAP', count($imapMessages)));
 			} catch (Horde_Imap_Client_Exception $e) {
 				throw new ServiceException('Can not get messages from mailbox ' . $mailbox->getName() . ': ' . $e->getMessage(), 0, $e);
 			}
 
 			foreach (array_chunk($imapMessages['messages'], 500) as $chunk) {
-				$this->dbMapper->insertBulk($account, ...array_map(function (IMAPMessage $imapMessage) use ($mailbox, $account) {
+				$messages = array_map(function (IMAPMessage $imapMessage) use ($mailbox, $account) {
 					return $imapMessage->toDbMessage($mailbox->getId(), $account->getMailAccount());
-				}, $chunk));
+				}, $chunk);
+				$this->dbMapper->insertBulk($account, ...$messages);
+				$perf->step(sprintf('persist %d messages in database', count($chunk)));
+				// Free the memory
+				unset($messages);
 			}
-			$perf->step('persist messages in database');
 
 			if (!$imapMessages['all']) {
 				// We might need more attempts to fill the cache
-				$perf->end();
-
 				$loggingMailboxId = $account->getId() . ':' . $mailbox->getName();
 				$total = $imapMessages['total'];
 				$cached = count($this->messageMapper->findAllUids($mailbox));
+				$perf->step('find number of cached UIDs');
+
+				$perf->end();
 				throw new IncompleteSyncException("Initial sync is not complete for $loggingMailboxId ($cached of $total messages cached).");
 			}
 
@@ -413,7 +420,7 @@ class ImapToDbSynchronizer {
 				);
 				$perf->step('get changed messages via Horde');
 
-				$permflagsEnabled = $this->mailManager->isPermflagsEnabled($account, $mailbox->getName());
+				$permflagsEnabled = $this->mailManager->isPermflagsEnabled($client, $account, $mailbox->getName());
 
 				foreach (array_chunk($response->getChangedMessages(), 500) as $chunk) {
 					$this->dbMapper->updateBulk($account, $permflagsEnabled, ...array_map(static function (IMAPMessage $imapMessage) use ($mailbox, $account) {
