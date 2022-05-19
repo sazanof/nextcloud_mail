@@ -1200,7 +1200,7 @@ export default {
 		toggleViewMode(){
 			this.autoLimit = !this.autoLimit;
 			this.showCC = this.showCC && this.selectCc.length === 0 && this.autoLimit ? false : true
-			this.showBCC = this.showBCC && this.selectBcc.length === 0 && this.autoLimit ? false : true
+			this.showBCC = this.showBCC && this.selectBCc.length === 0 && this.autoLimit ? false : true
 		}
 	},
 }
