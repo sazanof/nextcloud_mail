@@ -417,6 +417,7 @@ import UnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal
 import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus'
 import { showError } from '@nextcloud/dialogs'
 import { translate as t, getCanonicalLocale, getFirstDay, getLocale } from '@nextcloud/l10n'
+//import RecipientsModal from './RecipientsModal.vue'
 import Vue from 'vue'
 
 import { findRecipient } from '../service/AutocompleteService'
@@ -1240,6 +1241,20 @@ export default {
 	.multiselect__tag {
 		position: relative;
 	}
+
+	.multiselect__tag {
+		position: relative;
+		
+		.action-item--single  {
+			width:auto;
+			min-width: 24px;
+			height: 24px;
+			min-height: 24px;
+			position: absolute;
+			right: 0;
+		}
+
+	}	
 
 	&.mail-account {
 		border-top: none;
