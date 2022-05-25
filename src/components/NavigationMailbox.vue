@@ -219,7 +219,6 @@ import IconArchive from 'vue-material-design-icons/TrayFull'
 import IconInbox from 'vue-material-design-icons/Home'
 import ImportantIcon from './icons/ImportantIcon'
 import MoveMailboxModal from './MoveMailboxModal'
-
 import { clearCache } from '../service/MessageService'
 import { getMailboxStatus } from '../service/MailboxService'
 import logger from '../logger'
@@ -229,7 +228,6 @@ import { showInfo } from '@nextcloud/dialogs'
 import { DroppableMailboxDirective as droppableMailbox } from '../directives/drag-and-drop/droppable-mailbox'
 import dragEventBus from '../directives/drag-and-drop/util/dragEventBus'
 import EraserVariant from 'vue-material-design-icons/EraserVariant'
-
 export default {
 	name: 'NavigationMailbox',
 	components: {
@@ -405,7 +403,6 @@ export default {
 		genId(mailbox) {
 			return 'mailbox-' + mailbox.databaseId
 		},
-
 		/**
 		 * On menu toggle, fetch stats
 		 * @param {boolean} open menu opened state
@@ -415,7 +412,6 @@ export default {
 				this.fetchMailboxStats()
 			}
 		},
-
 		/**
 		 * Fetch mailbox unread/read stats
 		 */
@@ -424,7 +420,6 @@ export default {
 			if (this.account.isUnified || this.mailbox.specialRole === 'flagged') {
 				return
 			}
-
 			try {
 				const stats = await getMailboxStatus(this.mailbox.databaseId)
 				logger.debug(`loaded mailbox stats for ${this.mailbox.databaseId}`, { stats })
@@ -434,7 +429,6 @@ export default {
 				logger.error(`could not load mailbox stats for ${this.mailbox.databaseId}`, error)
 			}
 		},
-
 		async createMailbox(e) {
 			this.editing = true
 			const name = e.target.elements[1].value
@@ -462,7 +456,6 @@ export default {
 		},
 		markAsRead() {
 			this.loadingMarkAsRead = true
-
 			this.$store
 				.dispatch('markMailboxRead', {
 					accountId: this.account.id,
@@ -475,7 +468,6 @@ export default {
 		async changeFolderSubscription(subscribed) {
 			try {
 				this.changeSubscription = true
-
 				await this.$store.dispatch('changeMailboxSubscription', {
 					mailbox: this.mailbox,
 					subscribed,
@@ -490,7 +482,6 @@ export default {
 		async changeSyncInBackground(syncInBackground) {
 			try {
 				this.changingSyncInBackground = true
-
 				await this.$store.dispatch('patchMailbox', {
 					mailbox: this.mailbox,
 					attributes: {
@@ -511,9 +502,7 @@ export default {
 					accountId: this.account.id,
 					mailboxId: this.mailbox.databaseId,
 				})
-
 				await clearCache(this.account.id, this.mailbox.databaseId)
-
 				// TODO: there might be a nicer way to handle this
 				window.location.reload(false)
 			} finally {
@@ -570,7 +559,6 @@ export default {
 		async renameMailbox() {
 			this.renameInput = false
 			this.showSaving = false
-
 			try {
 				await this.$store.dispatch('renameMailbox', {
 					account: this.account,
