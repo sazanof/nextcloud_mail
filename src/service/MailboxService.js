@@ -56,7 +56,7 @@ export async function patchMailbox(id, data) {
 }
 export const clearMailbox = async(id) => {
 	const url = generateUrl('/apps/mail/api/mailboxes/{id}/clear', {
-		id
+		id,
 	})
 
 	await axios.post(url)
