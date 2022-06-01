@@ -160,17 +160,6 @@
 				{{ t('mail', 'Sync in background') }}
 			</ActionCheckbox>
 
-<<<<<<< HEAD
-			<ActionButton 
-			    v-if="mailbox.specialRole !== 'flagged' && !account.isUnified"
-				icon="icon-brush" 
-				@click="clearMailbox"
-				:close-after-click="true">
-				{{ t('mail', 'Clear mailbox') }}
-			</ActionButton>
-
-			<ActionButton v-if="!account.isUnified && !mailbox.specialRole && !hasSubMailboxes" icon="icon-delete" @click="deleteMailbox">
-=======
 			<ActionButton
 				v-if="mailbox.specialRole !== 'flagged' && !account.isUnified"
 				:close-after-click="true"
@@ -187,7 +176,6 @@
 						:title="t('mail', 'Delete mailbox')"
 						:size="20" />
 				</template>
->>>>>>> Users can clear their mailboxes
 				{{ t('mail', 'Delete mailbox') }}
 			</ActionButton>
 		</template>
