@@ -419,6 +419,7 @@ import UnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal
 import UnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal'
 import { showError } from '@nextcloud/dialogs'
 import { translate as t, getCanonicalLocale, getFirstDay, getLocale } from '@nextcloud/l10n'
+//import RecipientsModal from './RecipientsModal.vue'
 import Vue from 'vue'
 
 import { findRecipient } from '../service/AutocompleteService'
@@ -1222,6 +1223,20 @@ export default {
 		position: relative;
 	}
 
+	.multiselect__tag {
+		position: relative;
+		
+		.action-item--single  {
+			width:auto;
+			min-width: 24px;
+			height: 24px;
+			min-height: 24px;
+			position: absolute;
+			right: 0;
+		}
+
+	}	
+
 	&.mail-account {
 		border-top: none;
 		padding-top: 10px;
@@ -1347,6 +1362,7 @@ export default {
 ::v-deep .multiselect .multiselect__tags {
 	border: none !important;
 }
+<<<<<<< HEAD
 ::v-deep [data-select="create"] .avatardiv--unknown {
 	background: var(--color-text-maxcontrast) !important;
 }
@@ -1354,6 +1370,17 @@ export default {
 	flex-wrap: wrap;
 }
 
+=======
+::v-deep .multiselect.opened .multiselect__tags .multiselect__tags-wrap {
+	flex-wrap: wrap;
+}
+::v-deep .multiselect .multiselect__tags .multiselect__tags-wrap .multiselect__tag-custom {
+	padding:0 25px 0 0;
+	border-radius:25px;
+	border-color: transparent;
+	background-color: var(--color-background-dark);
+}
+>>>>>>> Allow user to view and edit full recipients list while writing a message
 .submit-message.send.primary.icon-confirm-white {
 	color: var(--color-main-background);
 }
