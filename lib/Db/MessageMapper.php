@@ -668,6 +668,13 @@ class MessageMapper extends QBMapper {
 			$qb->expr()->eq('m.mailbox_id', $qb->createNamedParameter($mailbox->getId()), IQueryBuilder::PARAM_INT)
 		);
 
+		if (!empty($query->getTags())) {
+			$select->innerJoin('m', 'mail_message_tags', 'tags', 'm.message_id = tags.imap_message_id');
+			$select->andWhere(
+				$qb->expr()->in('tags.tag_id', $qb->createNamedParameter($query->getTags(), IQueryBuilder::PARAM_STR_ARRAY))
+			);
+		}
+
 		if (!empty($query->getFrom())) {
 			$select->andWhere(
 				$qb->expr()->in('r0.email', $qb->createNamedParameter($query->getFrom(), IQueryBuilder::PARAM_STR_ARRAY))
