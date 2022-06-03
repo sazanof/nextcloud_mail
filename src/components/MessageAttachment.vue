@@ -28,38 +28,38 @@
 		</div>
 		<div class="mail-attached--content">
 			<span class="attachment-name"
-			:title="label">{{ name }}
+				:title="label">{{ name }}
 			</span>
-			<span class="attachment-size">({{ humanReadable(size) }})</span>
-			<Actions :boundaries-element="boundariesElement">
-				<ActionButton
-					v-if="isCalendarEvent"
-					class="attachment-import calendar"
-					:icon="{'icon-add': !loadingCalendars, 'icon-loading-small': loadingCalendars}"
-					:disabled="loadingCalendars"
-					@click.stop="loadCalendars">
-					{{ t('mail', 'Import into calendar') }}
-				</ActionButton>
-				<ActionButton icon="icon-download"
-					class="attachment-download"
-					@click="download">
-					{{ t('mail', 'Download attachment') }}
-				</ActionButton>
-				<ActionButton
-					class="attachment-save-to-cloud"
-					:icon="{'icon-folder': !savingToCloud, 'icon-loading-small': savingToCloud}"
-					:disabled="savingToCloud"
-					@click.stop="saveToCloud">
-					{{ t('mail', 'Save to Files') }}
-				</ActionButton>
-				<div
-					v-on-click-outside="closeCalendarPopover"
-					class="popovermenu bubble attachment-import-popover hidden"
-					:class="{open: showCalendarPopover}">
-					<PopoverMenu :menu="calendarMenuEntries" />
-				</div>
-			</Actions>
+			<span class="attachment-size">{{ humanReadable(size) }}</span>
 		</div>
+		<Actions :boundaries-element="boundariesElement">
+			<ActionButton
+				v-if="isCalendarEvent"
+				class="attachment-import calendar"
+				:icon="{'icon-add': !loadingCalendars, 'icon-loading-small': loadingCalendars}"
+				:disabled="loadingCalendars"
+				@click.stop="loadCalendars">
+				{{ t('mail', 'Import into calendar') }}
+			</ActionButton>
+			<ActionButton icon="icon-download"
+				class="attachment-download"
+				@click="download">
+				{{ t('mail', 'Download attachment') }}
+			</ActionButton>
+			<ActionButton
+				class="attachment-save-to-cloud"
+				:icon="{'icon-folder': !savingToCloud, 'icon-loading-small': savingToCloud}"
+				:disabled="savingToCloud"
+				@click.stop="saveToCloud">
+				{{ t('mail', 'Save to Files') }}
+			</ActionButton>
+			<div
+				v-on-click-outside="closeCalendarPopover"
+				class="popovermenu bubble attachment-import-popover hidden"
+				:class="{open: showCalendarPopover}">
+				<PopoverMenu :menu="calendarMenuEntries" />
+			</div>
+		</Actions>
 	</div>
 </template>
 
@@ -214,25 +214,17 @@ export default {
 
 .attachment {
 	height: auto;
-	display:inline-flex;
-	justify-content: space-between;
-	width: calc(33.3334% - 20px);
-	margin: 10px;
-	position: relative;
-}
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: calc(33.3334% - 10px);
+    margin: 5px;
+    position: relative;
+    align-items: center;
 
-.attachment:hover,
-.attachment span:hover {
-	background-color: var(--color-background-hover);
-	cursor: pointer;
-
-	.action-item {
-		transition: 0.4s;
-		opacity: 1;
-	}
-	img {
-		transition: 0.3s;
-		opacity: 0.2;
+	&:hover {
+		background: var(--color-background-hover);
+		border-radius: 6px;
 	}
 }
 
@@ -243,6 +235,7 @@ export default {
 	display:flex;
 	justify-content: center;
 	position: relative;
+	border-radius: 6px;
 
 	img {
 		transition: 0.3s;
@@ -250,14 +243,14 @@ export default {
 		width: 44px;
 		height: 44px;
 	}
-	
+
 	.mail-attached-image {
 		width: 100px;
 	}
 }
 
 .mail-attached--content {
-	width: calc(100% - 49px);
+	width: calc(100% - 100px);
 	display: flex;
     flex-direction: column;
 }
@@ -282,6 +275,7 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	vertical-align: middle;
+	font-weight: bold;
 }
 
 /* show attachment size less prominent */
@@ -298,11 +292,6 @@ export default {
 	margin-bottom: 20px;
 }
 .action-item {
-	left:0;
-	top:0;
-	opacity: 0;
-	display: inline-block !important;
-	position: absolute !important;
 	transition: 0.4s;
 }
 .mail-message-attachments {

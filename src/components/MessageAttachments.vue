@@ -20,12 +20,34 @@
   -->
 
 <template>
-	<div class="mail-message-attachments">
-		<div class="mail-message-attachments--wrapper">
+	<div class="mail-message-attachments" :class="hasNextLine ? 'has-next-line' : ''">
+		<div v-if="hasNextLine"
+			class="show-more-attachments"
+			@click="isToggled = !isToggled">
+			<ChevronDown v-if="isToggled" :size="24" />
+			<ChevronUp v-if="!isToggled" :size="24" />
+			{{ n('mail', '{count} attachment', '{count} attachments', attachments.length, { count: attachments.length }) }}
+		</div>
+		<p v-if="moreThanOne" class="attachments-button-wrapper">
+			<span class="attachment-link"
+				:disabled="savingToCloud"
+				@click="saveAll">
+				<CloudDownload v-if="!savingToCloud" :size="18" />
+				<Loading v-else class="spin" :size="18" />
+				{{ t('mail', 'Save all to Files') }}
+			</span>
+			<span class="attachment-link"
+				@click="downloadZip">
+				<Download :size="18" />
+				{{ t('mail', 'Download Zip') }}
+			</span>
+		</p>
+		<div class="mail-message-attachments--wrapper" :class="(hasNextLine === true && isToggled === true) ? 'hide' : ''">
 			<div class="attachments">
 				<MessageAttachment
 					v-for="attachment in attachments"
 					:id="attachment.id"
+					ref="attachments"
 					:key="attachment.id"
 					:file-name="attachment.fileName"
 					:size="attachment.size"
@@ -40,20 +62,6 @@
 					@close="showPreview = false" />
 			</div>
 		</div>
-		<p v-if="moreThanOne" class="attachments-button-wrapper">
-				<button
-					class="attachments-save-to-cloud"
-					:class="{'icon-folder': !savingToCloud, 'icon-loading-small': savingToCloud}"
-					:disabled="savingToCloud"
-					@click="saveAll">
-					{{ t('mail', 'Save all to Files') }}
-				</button>
-				<button
-					class="attachments-save-to-cloud icon-folder"
-					@click="downloadZip">
-					{{ t('mail', 'Download Zip') }}
-				</button>
-			</p>
 	</div>
 </template>
 
@@ -66,11 +74,22 @@ import MessageAttachment from './MessageAttachment'
 import Logger from '../logger'
 import AttachmentImageViewer from './AttachmentImageViewer'
 
+import Download from 'vue-material-design-icons/Download'
+import CloudDownload from 'vue-material-design-icons/CloudDownload'
+import Loading from 'vue-material-design-icons/Loading'
+import ChevronDown from 'vue-material-design-icons/ChevronDown'
+import ChevronUp from 'vue-material-design-icons/ChevronUp'
+
 export default {
 	name: 'MessageAttachments',
 	components: {
 		AttachmentImageViewer,
 		MessageAttachment,
+		Download,
+		CloudDownload,
+		Loading,
+		ChevronDown,
+		ChevronUp,
 	},
 	props: {
 		envelope: {
@@ -87,6 +106,8 @@ export default {
 			savingToCloud: false,
 			showPreview: false,
 			attachmentImageURL: '',
+			hasNextLine: false,
+			isToggled: false,
 		}
 	},
 	computed: {
@@ -98,6 +119,25 @@ export default {
 				id: this.envelope.databaseId,
 			})
 		},
+	},
+	mounted() {
+		let prevTop = null
+		this.$nextTick(function() {
+			if (this.$refs.attachments) {
+				this.$refs.attachments.some((attachment, i) => {
+					const top = attachment.$el.getBoundingClientRect().top
+					if (prevTop !== null && prevTop !== top) {
+						this.isToggled = true
+						this.hasNextLine = true
+						return true
+					} else {
+						prevTop = top
+					}
+					return false
+				})
+			}
+		})
+
 	},
 	methods: {
 		saveAll() {
@@ -140,31 +180,84 @@ export default {
 
 <style lang="scss">
 .attachments {
-	width: calc(100% - 66px);
-	box-sizing: border-box;
-	padding: 0 10px;
+	width: 100%;
+    box-sizing: border-box;
     position: relative;
     display: flex;
-	flex-wrap: wrap;
-	margin: 0 33px 10px 33px;
-	overflow: auto;
+    flex-wrap: wrap;
+    margin: 10px 0;
 }
 
 /* show icon + text for Download all button
 		as well as when there is only one attachment */
 .attachments-button-wrapper {
 	text-align: center;
+	display: flex;
+	align-items: center;
 }
-.attachments-save-to-cloud {
-	display: inline-block;
-	margin: 16px;
-	background-position: 16px center;
-  padding: 12px 12px 12px 37px !important;
+
+.show-more-attachments {
+	display: flex;
+    align-items: center;
+	cursor: pointer;
+	padding: 0 8px;
+	color: var(--color-text-lighter);
+
+	&:hover {
+		color: var(--color-main-text);
+	}
 }
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.attachment-link {
+	cursor: pointer;
+	display:flex;
+	align-items: center;
+	color: var(--color-text-lighter);
+
+	&:hover {
+		color: var(--color-main-text);
+	}
+
+	span {
+		margin: 0 4px 0 10px;
+	}
+}
+
 .oc-dialog {
 	z-index: 10000000;
 }
+.mail-message-attachments {
+	display:flex;
+	flex-wrap: wrap;
+	padding: 0 6px 0 46px;
+	margin-top: 4px;
+}
 .mail-message-attachments--wrapper {
-	display:flex
+	display:flex;
+	width:100%;
+	height:auto;
+	overflow: hidden;
+	max-height: none;
+}
+
+.mail-message-attachments--wrapper.hide {
+	display:flex;
+	max-height: 67px;
 }
 </style>

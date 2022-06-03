@@ -4,7 +4,7 @@
   - @author 2020 Christoph Wurst <christoph@winzerhof-wurst.at>
   - @author 2021 Richard Steinmetz <richard@steinmetz.cloud>
   -
-  - @license AGPL-3.0-or-later
+  - @license GNU AGPL version 3 or any later version
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -26,12 +26,6 @@
 		:aria-label="t('mail','Message body')">
 		<div v-if="itineraries.length > 0" class="message-itinerary">
 			<Itinerary :entries="itineraries" :message-id="message.messageId" />
-		</div>
-		<div v-if="message.scheduling.length > 0" class="message-imip">
-			<Imip
-				v-for="scheduling in message.scheduling"
-				:key="scheduling.id"
-				:scheduling="scheduling" />
 		</div>
 		<MessageHTMLBody v-if="message.hasHtmlBody"
 			:url="htmlUrl"
@@ -60,7 +54,6 @@ import MessageAttachments from './MessageAttachments'
 import MessageEncryptedBody from './MessageEncryptedBody'
 import MessageHTMLBody from './MessageHTMLBody'
 import MessagePlainTextBody from './MessagePlainTextBody'
-import Imip from './Imip'
 
 export default {
 	name: 'Message',
@@ -70,7 +63,6 @@ export default {
 		MessageEncryptedBody,
 		MessageHTMLBody,
 		MessagePlainTextBody,
-		Imip,
 	},
 	props: {
 		envelope: {
@@ -110,9 +102,5 @@ export default {
 .v-popover > .trigger > .action-item {
 	border-radius: 22px;
 	background-color: var(--color-background-darker);
-}
-
-.message-imip {
-	padding: 5px 10px;
 }
 </style>
