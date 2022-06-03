@@ -54,6 +54,9 @@ class SearchQuery {
 	/** @var string[] */
 	private $textTokens = [];
 
+	/** @var array[] */
+	private $tags = [];
+
 	/**
 	 * @return int|null
 	 * @psalm-mutation-free
@@ -153,5 +156,24 @@ class SearchQuery {
 
 	public function addTextToken(string $textToken): void {
 		$this->textTokens[] = $textToken;
+	}
+
+	/**
+	 * Get tags to search query
+	 *
+	 * @return array
+	 */
+	public function getTags(): array {
+		return $this->tags;
+	}
+
+	/**
+	 * Set tags to search query
+	 *
+	 * @param array $tags
+	 * @return void
+	 */
+	public function setTags(array $tags): void {
+		$this->tags = $tags;
 	}
 }
