@@ -27,6 +27,7 @@
 		<div v-if="itineraries.length > 0" class="message-itinerary">
 			<Itinerary :entries="itineraries" :message-id="message.messageId" />
 		</div>
+		<MessageAttachments :attachments="message.attachments" :envelope="envelope" />
 		<MessageHTMLBody v-if="message.hasHtmlBody"
 			:url="htmlUrl"
 			:message="message"
@@ -39,7 +40,6 @@
 			:body="message.body"
 			:signature="message.signature"
 			:message="message" />
-		<MessageAttachments :attachments="message.attachments" :envelope="envelope" />
 		<div id="reply-composer" />
 	</div>
 </template>
