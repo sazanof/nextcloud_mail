@@ -57,6 +57,9 @@ class FilterStringParser {
 			'starred' => Flag::is(Flag::FLAGGED),
 			'unread' => Flag::not(Flag::SEEN),
 			'important' => Flag::is(Flag::IMPORTANT),
+			'is_important' => FlagExpression::and(
+				Flag::is(Flag::IMPORTANT)
+			)
 		];
 
 		switch ($type) {
@@ -131,7 +134,31 @@ class FilterStringParser {
 				$query->addBcc($param);
 				return true;
 			case 'subject':
-				$query->addSubject($param);
+				// from frontend part subject:My+search+text
+				$subject = str_replace('+',' ',$param);
+				$query->addSubject($subject);
+				return true;
+			case 'tags':
+				$tags = is_array($param) ? $param : explode(',',$param);
+				$query->setTags($tags);
+				return true;
+			case 'flags':
+				$flagArray = explode(',', $param);
+				if(!empty($flagArray)){
+					foreach($flagArray as $flagItem){
+						if (array_key_exists($flagItem, $flagMap)) {
+							/** @var Flag $flag */
+							$flag = $flagMap[$flagItem];
+							if($flag instanceof Flag){
+								$query->addFlag($flag);
+							}
+							elseif ($flag instanceof FlagExpression){
+								$query->addFlagExpression($flag);
+							}
+						}
+					}
+				}
+
 				return true;
 		}
 
