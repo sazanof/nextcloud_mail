@@ -421,6 +421,7 @@ OC.L10N.register(
     "Search parameters" : "Параметры поиска",
     "Tags" : "Метки",
     "Select tags..." : "Выберите метки...",
-    "Select recipient..." : "Пользователь или адрес..."
+    "Select recipient..." : "Пользователь или адрес...",
+    "_{count} attachment_::_{count} attachments_" : ["{count} вложение","{count} вложения","{count} вложений","{count} вложений"],
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");
