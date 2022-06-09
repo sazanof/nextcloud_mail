@@ -201,7 +201,7 @@ class ContactsIntegration {
 	private function doSearch(string $term, array $fields): array {
 		$allowSystemUsers = $this->config->getAppValue('core', 'shareapi_allow_share_dialog_user_enumeration', 'no') === 'yes';
 
-		$result = $this->contactsManager->search($term, $fields);
+		$result = $this->contactsManager->search($term, $fields, ['escape_like_param' => false]);
 		$matches = [];
 		foreach ($result as $r) {
 			if (!$allowSystemUsers && isset($r['isLocalSystemBook']) && $r['isLocalSystemBook']) {
