@@ -3,8 +3,8 @@
 		<ListItemIcon
 			:no-margin="true"
 			:title="option.label"
-			:avatar-size="24"
-		/>
+			:url="option.photo"
+			:avatar-size="24" />
 		<Actions>
 			<ActionButton @click.prevent="removeRecipient(option)">
 				<template #icon>
