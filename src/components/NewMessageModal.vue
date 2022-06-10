@@ -21,8 +21,6 @@
 			:forwarded-messages="forwardedMessages"
 			:forward-from="composerData.forwardFrom"
 			@close="$emit('close')" />
-
-
 	</Modal>
 </template>
 <script>
