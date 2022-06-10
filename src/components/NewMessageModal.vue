@@ -14,7 +14,6 @@
 			:editor-body="convertEditorBody(composerData)"
 			:in-reply-to-message-id="composerData.inReplyToMessageId"
 			:reply-to="composerData.replyTo"
-			:forward-from="composerData.forwardFrom"
 			:draft-id="composerData.draftId"
 			:send-at="composerData.sendAt * 1000"
 			:draft="saveDraft"
