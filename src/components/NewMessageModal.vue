@@ -118,25 +118,16 @@ export default {
 		async sendMessage(data) {
 			logger.debug('sending message', { data })
 			const now = new Date().getTime()
-			//for (const attachment of data.attachments) {
-				//if (!attachment.type) {
+			for (const attachment of data.attachments) {
+				if (!attachment.type) {
 					// todo move to backend: https://github.com/nextcloud/mail/issues/6227
-				//	attachment.type = 'local'
-				//}
-			//}
-			const dataForServer = {
-				accountId: data.account,
-				subject: data.subject,
-				body: data.isHtml ? data.body.value : toPlain(data.body).value,
-				isHtml: data.isHtml,
-				to: data.to,
-				cc: data.cc,
-				bcc: data.bcc,
-				attachments: data.attachments,
-				aliasId: data.aliasId,
-				inReplyToMessageId: null,
-				sendAt: data.sendAt ? data.sendAt : Math.floor((now + UNDO_DELAY) / 1000),
+					attachment.type = 'local'
+				}
 			}
+			const dataForServer = this.getDataForServer({
+				...data,
+				sendAt: data.sendAt ? data.sendAt : Math.floor((now + UNDO_DELAY) / 1000),
+			})
 			if (dataForServer.sendAt < Math.floor((now + UNDO_DELAY) / 1000)) {
 				dataForServer.sendAt = Math.floor((now + UNDO_DELAY) / 1000)
 			}
