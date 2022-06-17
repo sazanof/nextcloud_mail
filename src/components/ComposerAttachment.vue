@@ -186,6 +186,7 @@ a.list-item {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space:nowrap;
+	font-weight: bold;
 	margin-bottom: 3px;
 }
 
