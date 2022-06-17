@@ -117,17 +117,6 @@ class OutboxController extends Controller {
 		if ($draftId !== null) {
 			$this->service->handleDraft($account, $draftId);
 		}
-		
-		foreach($attachments as $index => $attachment){
-			if(!isset($attachment['type'])){
-				if(isset($attachment['messageId'])){
-					$attachments[$index]['type'] = 'message-attachment';
-				}
-				else {
-					$attachments[$index]['type'] = 'local';
-				}
-			}
-		}
 
 		$message = new LocalMessage();
 		$message->setType(LocalMessage::TYPE_OUTGOING);
