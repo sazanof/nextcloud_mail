@@ -258,6 +258,6 @@ export default {
 
 .mail-message-attachments--wrapper.hide {
 	display:flex;
-	max-height: 67px;
+	max-height: 70px;
 }
 </style>
