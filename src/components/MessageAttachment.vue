@@ -20,10 +20,12 @@
   -->
 
 <template>
-	<div class="attachment"
-		@click.prevent="$emit('click', $event)">
+	<div class="attachment">
 		<div class="mail-attachment-img--wrapper">
-			<img v-if="isImage" class="mail-attached-image" :src="url">
+			<img v-if="isImage"
+				class="mail-attached-image"
+				:src="url"
+				@click.prevent="$emit('click', $event)">
 			<img v-else class="attachment-icon" :src="mimeUrl">
 		</div>
 		<div class="mail-attached--content">
@@ -217,8 +219,9 @@ export default {
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    width: calc(33.3334% - 10px);
-    margin: 5px;
+    width: calc(33.3334% - 4px);
+    margin: 2px;
+	padding: 5px;
     position: relative;
     align-items: center;
 
