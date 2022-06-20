@@ -284,8 +284,8 @@ class MailboxesController extends Controller {
 		$this->mailManager->deleteMailbox($account, $mailbox);
 		return new JSONResponse();
 	}
-
-    /**
+	
+	/**
 	 * @NoAdminRequired
 	 * @TrapError
 	 *

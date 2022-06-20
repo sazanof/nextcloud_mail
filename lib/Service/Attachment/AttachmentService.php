@@ -308,21 +308,12 @@ class AttachmentService implements IAttachmentService {
 	 * @param Account $account
 	 * @param mixed[] $attachment
 	 * @param \Horde_Imap_Client_Socket $client
-	 * @param int $originalMailboxId
 	 * @return int
 	 * @throws DoesNotExistException
 	 */
 	private function handleForwardedAttachment(Account $account, array $attachment, \Horde_Imap_Client_Socket $client): ?int {
-		if(isset($attachment['originalMessageId'])){
-			$attachmentMessage = $this->mailManager->getMessage($account->getUserId(), (int)$attachment['originalMessageId']);
-		}
-		else {
-			$attachmentMessage = $this->mailManager->getMessage($account->getUserId(), (int)$attachment['messageId']);
-		}
-		
-		$mailboxId = $attachmentMessage->getMailboxId();
-		
-		$mailbox = $this->mailManager->getMailbox($account->getUserId(), $mailboxId);
+		$mailbox = $this->mailManager->getMailbox($account->getUserId(), $attachment['mailboxId']);
+
 		$attachments = $this->messageMapper->getRawAttachments(
 			$client,
 			$mailbox->getName(),
