@@ -114,6 +114,7 @@
 <script>
 import Avatar from './Avatar'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import ThreadEnvelopePopover from './ThreadEnvelopePopover'
 import Error from './Error'
 import importantSvg from '../../img/important.svg'
 import IconFavorite from 'vue-material-design-icons/Star'
@@ -133,6 +134,7 @@ export default {
 	components: {
 		Avatar,
 		Button,
+		ThreadEnvelopePopover,
 		Error,
 		IconFavorite,
 		JunkIcon,
