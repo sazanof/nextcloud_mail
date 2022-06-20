@@ -1,12 +1,5 @@
 <template>
-	<Popover trigger="hover">
-		<template #trigger>
-			<Avatar v-if="envelope.from && envelope.from[0]"
-			:email="envelope.from[0].email"
-			:display-name="envelope.from[0].label"
-			:disable-tooltip="true"
-			:size="40" />
-		</template>
+	<Popover :open="popover">
 		<template>
 			<div class="popover-details">
 				<div class="popover-details--field">
@@ -56,6 +49,10 @@ export default {
 		Popover
 	},
 	props: {
+		popover: {
+			type: Boolean,
+			default: false
+		},
 		envelope: {
 			type: Object,
 			required: true
