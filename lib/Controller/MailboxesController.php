@@ -285,11 +285,7 @@ class MailboxesController extends Controller {
 		return new JSONResponse();
 	}
 	
-<<<<<<< HEAD
 	/**
-=======
-    /**
->>>>>>> Users can clear their mailboxes
 	 * @NoAdminRequired
 	 * @TrapError
 	 *
