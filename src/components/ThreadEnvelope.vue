@@ -25,10 +25,15 @@
 		<div class="envelope--header"
 			:class="{'list-item-style' : expanded }">
 			<Avatar v-if="envelope.from && envelope.from[0]"
-				:email="envelope.from[0].email"
-				:display-name="envelope.from[0].label"
-				:disable-tooltip="true"
-				:size="40" />
+			:email="envelope.from[0].email"
+			:display-name="envelope.from[0].label"
+			:disable-tooltip="true"
+			:size="40"
+			@mouseover.native.prevent="popover = true"
+			@mouseleave.native.prevent="popover = false" />
+			<ThreadEnvelopePopover 
+			:popover="popover" 
+			:envelope="envelope" />
 			<div
 				v-if="isImportant"
 				class="app-content-list-item-star icon-important"
@@ -107,6 +112,7 @@
 <script>
 import Avatar from './Avatar'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import ThreadEnvelopePopover from './ThreadEnvelopePopover'
 import Error from './Error'
 import importantSvg from '../../img/important.svg'
 import Loading from './Loading'
@@ -123,6 +129,7 @@ export default {
 	components: {
 		Avatar,
 		Button,
+		ThreadEnvelopePopover,
 		Error,
 		Loading,
 		MenuEnvelope,
@@ -167,6 +174,7 @@ export default {
 			message: undefined,
 			importantSvg,
 			seenTimer: undefined,
+			popover: false,
 		}
 	},
 	computed: {
