@@ -278,7 +278,6 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	vertical-align: middle;
-	font-weight: bold;
 }
 
 /* show attachment size less prominent */

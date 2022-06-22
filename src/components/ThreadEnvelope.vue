@@ -320,9 +320,6 @@ export default {
 		margin-left: 8px;
 		font-weight: bold;
 	}
-	.centered-sender {
-		margin-top: 8px;
-	}
 
 	.right {
 		display: flex;

@@ -20,28 +20,7 @@
   -->
 
 <template>
-	<div class="mail-message-attachments" :class="hasNextLine ? 'has-next-line' : ''">
-		<div v-if="hasNextLine"
-			class="show-more-attachments"
-			@click="isToggled = !isToggled">
-			<ChevronDown v-if="isToggled" :size="24" />
-			<ChevronUp v-if="!isToggled" :size="24" />
-			{{ n('mail', '{count} attachment', '{count} attachments', attachments.length, { count: attachments.length }) }}
-		</div>
-		<p v-if="moreThanOne" class="attachments-button-wrapper">
-			<span class="attachment-link"
-				:disabled="savingToCloud"
-				@click="saveAll">
-				<CloudDownload v-if="!savingToCloud" :size="18" />
-				<Loading v-else class="spin" :size="18" />
-				{{ t('mail', 'Save all to Files') }}
-			</span>
-			<span class="attachment-link"
-				@click="downloadZip">
-				<Download :size="18" />
-				{{ t('mail', 'Download Zip') }}
-			</span>
-		</p>
+	<div v-if="attachments.length > 0" class="mail-message-attachments" :class="hasNextLine ? 'has-next-line' : ''">
 		<div class="mail-message-attachments--wrapper" :class="(hasNextLine === true && isToggled === true) ? 'hide' : ''">
 			<div class="attachments">
 				<MessageAttachment
@@ -62,6 +41,32 @@
 					@close="showPreview = false" />
 			</div>
 		</div>
+		<div v-if="hasNextLine"
+			class="show-more-attachments"
+			@click="isToggled = !isToggled">
+			<ChevronDown v-if="isToggled" :size="24" />
+			<ChevronUp v-if="!isToggled" :size="24" />
+			<span v-if="isToggled">
+				{{ n('mail', 'View more {count} attachment', 'View more {count} attachments', (attachments.length - visible), { count: attachments.length - visible }) }}
+			</span>
+			<span v-else>
+				{{ t('mail', 'View less attachments') }}
+			</span>
+		</div>
+		<p v-if="moreThanOne" class="attachments-button-wrapper">
+			<span class="attachment-link"
+				:disabled="savingToCloud"
+				@click="saveAll">
+				<CloudDownload v-if="!savingToCloud" :size="18" />
+				<Loading v-else class="spin" :size="18" />
+				{{ t('mail', 'Save all to Files') }}
+			</span>
+			<span class="attachment-link"
+				@click="downloadZip">
+				<Download :size="18" />
+				{{ t('mail', 'Download Zip') }}
+			</span>
+		</p>
 	</div>
 </template>
 
@@ -103,6 +108,7 @@ export default {
 	},
 	data() {
 		return {
+			visible: 0,
 			savingToCloud: false,
 			showPreview: false,
 			attachmentImageURL: '',
@@ -122,6 +128,7 @@ export default {
 	},
 	mounted() {
 		let prevTop = null
+		this.visible = 0
 		this.$nextTick(function() {
 			if (this.$refs.attachments) {
 				this.$refs.attachments.some((attachment, i) => {
@@ -132,6 +139,7 @@ export default {
 						return true
 					} else {
 						prevTop = top
+						this.visible++
 					}
 					return false
 				})
@@ -200,8 +208,12 @@ export default {
 	display: flex;
     align-items: center;
 	cursor: pointer;
-	padding: 0 8px;
+	padding: 2px 0;
 	color: var(--color-text-lighter);
+
+	span {
+		cursor: pointer;
+	}
 
 	&:hover {
 		color: var(--color-main-text);
@@ -235,7 +247,7 @@ export default {
 	}
 
 	span {
-		margin: 0 4px 0 10px;
+		margin: 0 4px 0 16px;
 	}
 }
 
@@ -245,8 +257,12 @@ export default {
 .mail-message-attachments {
 	display:flex;
 	flex-wrap: wrap;
-	padding: 0 6px 0 46px;
+	padding: 10px 6px 10px 46px;
 	margin-top: 4px;
+	margin-bottom: -40px;
+	position:sticky;
+	bottom:0;
+	background: linear-gradient(0deg, var(--color-main-background), var(--color-main-background) 90%, rgba(255, 255, 255, 0));
 }
 .mail-message-attachments--wrapper {
 	display:flex;
