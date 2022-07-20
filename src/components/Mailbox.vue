@@ -183,7 +183,7 @@ export default {
 		},
 	},
 	created() {
-		this.bus.$on('loadMore', this.onScroll)
+		this.bus.$on('load-more', this.onScroll)
 		this.bus.$on('delete', this.onDelete)
 		this.bus.$on('shortcut', this.handleShortcut)
 		this.loadMailboxInterval = setInterval(this.loadMailbox, 60000)
@@ -196,7 +196,7 @@ export default {
 			})
 	},
 	destroyed() {
-		this.bus.$off('loadMore', this.onScroll)
+		this.bus.$off('load-more', this.onScroll)
 		this.bus.$off('delete', this.onDelete)
 		this.bus.$off('shortcut', this.handleShortcut)
 		this.stopInterval()
