@@ -32,8 +32,8 @@
 			:size="40"
 			@mouseover.native.prevent="popover = true"
 			@mouseleave.native.prevent="popover = false" />
-			<ThreadEnvelopePopover 
-			:popover="popover" 
+			<ThreadEnvelopePopover
+			:popover="popover"
 			:envelope="envelope" />
 			<div
 				v-if="isImportant"
@@ -63,7 +63,6 @@
 				:class="{seen: envelope.flags.seen, 'original-subject': !hasChangedSubject}"
 				@click.native.prevent="$emit('toggle-expand', $event)">
 				<div class="sender"
-					:class="{ 'centered-sender': centeredSender }">
 					:class="{ 'centered-sender': centeredSender }">
 					{{ envelope.from && envelope.from[0] ? envelope.from[0].label : '' }}
 				</div>

@@ -284,7 +284,7 @@ class MailboxesController extends Controller {
 		$this->mailManager->deleteMailbox($account, $mailbox);
 		return new JSONResponse();
 	}
-	
+
 	/**
 	 * @NoAdminRequired
 	 * @TrapError
@@ -294,6 +294,7 @@ class MailboxesController extends Controller {
 	 * @return JSONResponse
 	 * @throws ClientException
 	 * @throws ServiceException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
 	 */
 	public function clearMailbox(int $id): JSONResponse {
 		$mailbox = $this->mailManager->getMailbox($this->currentUserId, $id);
